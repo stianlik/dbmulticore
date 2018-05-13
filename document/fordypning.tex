@@ -1,0 +1,61 @@
+\documentclass[11pt,a4paper,twoside]{report}
+\raggedbottom % Fiks for teit twoside-strekking av tekst
+%\documentclass[11pt,a4paper]{report}
+\usepackage{fordypning}
+\begin{document}
+
+\cleardoublepage
+\begin{titlepage}
+\include{tex/title}
+\end{titlepage}
+%\listoffigures
+%\listoftables
+
+\cleardoublepage
+\begin{titlepage}
+\input{tex/abstract}
+\end{titlepage}
+
+\cleardoublepage
+\tableofcontents
+\thispagestyle{empty}
+
+\cleardoublepage
+\setcounter{page}{1}
+\chapter{Introduction}
+\input{tex/introduction}
+
+\cleardoublepage
+\chapter{Database operations}
+\input{tex/database-operations}
+
+\cleardoublepage
+\chapter{Disk-based algorithms}
+\label{chap:disk-based-algorithms}
+\input{tex/disk-based-algorithms}
+
+\cleardoublepage
+\chapter{Multi-core processors}
+\input{tex/multi-core-processors}
+
+\cleardoublepage
+\chapter{Memory-based algorithms}
+\label{chap:memory-based-algorithms}
+\input{tex/memory-based-algorithms}
+
+\cleardoublepage
+\chapter{Implementation and evaluation}
+\label{chap:implementation-and-evaluation}
+\input{tex/implementation-and-evaluation}
+
+\cleardoublepage
+\chapter{Conclusions and future work}
+\input{tex/conclusions}
+ 
+\cleardoublepage
+\bibliographystyle{abbrv}
+\bibliography{references}
+
+%\chapter*{Appendix}
+
+\end{document}

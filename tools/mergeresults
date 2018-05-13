@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ $# -lt 1 ]; then
+	echo "mergeresults INFILES"
+	exit 1
+fi
+
+files=("$@")
+
+merge() {
+	for i in ${files[*]}; do 
+		echo "#FILE $i"
+		cat "$i"
+	done 
+}
+
+merge

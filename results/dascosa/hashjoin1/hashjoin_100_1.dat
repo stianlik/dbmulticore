@@ -1,0 +1,24 @@
+# Reading tables
+# Performing tests for hashjoin
+# Thread count	Time	
+1	1613	
+# Thread count	Time	
+1	1148	
+# Thread count	Time	
+1	1148	
+# Thread count	Time	
+1	1148	
+# Thread count	Time	
+1	1148	
+# Thread count	Time	
+1	1148	
+# Thread count	Time	
+1	1148	
+# Thread count	Time	
+1	1148	
+# Thread count	Time	
+1	1148	
+# Thread count	Time	
+1	1148	
+# Total time in algorithm: 1148 ms
+# Ellapsed time: 191.448 seconds

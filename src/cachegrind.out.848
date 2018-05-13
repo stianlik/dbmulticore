@@ -1,0 +1,857 @@
+desc: I1 cache:         32768 B, 64 B, 8-way associative
+desc: D1 cache:         32768 B, 64 B, 8-way associative
+desc: LL cache:         3145728 B, 64 B, 12-way associative
+cmd: ./ta
+events: Ir I1mr ILmr Dr D1mr DLmr Dw D1mw DLmw 
+fl=/home/stianlik/Prosjekter/fordypning/src/hipta.cpp
+fn=hipta_free()
+142 42 14 1 0 0 0 28 0 0
+143 6972 0 0 2310 0 0 0 0 0
+144 9184 0 0 2296 0 0 2296 0 0
+146 28 14 1 0 0 0 14 0 0
+147 56 0 0 14 0 0 14 0 0
+148 56 0 0 14 0 0 0 0 0
+149 42 0 0 28 0 0 0 0 0
+fn=hipta_init(int**, int, int**, int, double (*)(int*), int, int, result_t&)
+126 196 2 2 28 0 0 84 0 0
+130 84 0 0 14 1 1 42 0 0
+131 434 28 2 28 0 0 350 1 1
+132 14 0 0 0 0 0 14 0 0
+135 56 0 0 0 0 0 28 0 0
+136 11536 0 0 4592 0 0 0 0 0
+137 6888 2 1 0 0 0 2296 0 0
+139 42 0 0 0 0 0 0 0 0
+140 98 0 0 84 0 0 0 0 0
+fn=hipta_processRow(void*)
+20 816 3 0 0 0 0 714 0 0
+24 408 0 0 102 0 0 0 0 0
+25 102 0 0 102 0 0 0 0 0
+28 4686 28 2 3234 0 0 102 0 0
+29 25056 2 1 6264 0 0 0 0 0
+34 25056 0 0 4176 0 0 4176 0 0
+35 29232 14 1 16704 159 0 0 0 0
+36 1792 0 0 0 0 0 1792 0 0
+37 5376 0 0 1792 0 0 1792 0 0
+39 5376 0 0 5376 0 0 1792 0 0
+40 5376 0 0 0 0 0 3584 0 0
+41 7168 0 0 3584 0 0 1792 0 0
+42 3584 0 0 0 0 0 1792 0 0
+45 7152 0 0 2384 0 0 2384 0 0
+51 204 0 0 102 0 0 0 0 0
+52 1872 14 1 702 0 0 0 0 0
+54 1560 0 0 936 0 0 312 0 0
+59 918 0 0 714 0 0 0 0 0
+fn=hipta_threadpool(ThreadPool*)
+62 312 2 1 78 1 0 78 0 0
+63 156 0 0 0 0 0 0 0 0
+99 154 28 2 0 0 0 84 0 0
+101 42 0 0 28 0 0 14 0 0
+102 262 0 0 78 0 0 0 0 0
+106 744 0 0 204 0 0 0 0 0
+112 156 0 0 156 0 0 78 0 0
+113 414 2 1 268 0 0 0 0 0
+114 102 0 0 34 0 0 0 0 0
+118 112 0 0 98 1 0 0 0 0
+fn=hipta_worker(void*)
+151 208 14 1 0 0 0 156 3 3
+153 156 1 1 0 0 0 26 0 0
+155 204 2 1 102 0 0 102 0 0
+158 50 0 0 0 0 0 25 0 0
+161 225 0 0 175 0 0 0 0 0
+fl=/home/stianlik/Prosjekter/fordypning/src/read_table.cpp
+fn=read_table(char const*, int**, int, int)
+4 14 1 1 0 0 0 7 1 1
+10 5 0 0 0 0 0 1 1 1
+16 1286 1 1 160 0 0 161 0 0
+17 960 0 0 0 0 0 160 0 0
+19 4960 0 0 0 0 0 480 0 0
+20 1280 0 0 640 3 0 0 0 0
+26 2 1 1 0 0 0 1 0 0
+27 8 0 0 7 1 0 0 0 0
+fl=/home/stianlik/Prosjekter/fordypning/src/ta.cpp
+fn=addResult(int, double, result_t&)
+82 26880 4 1 0 0 0 13440 0 0
+87 629784 2 2 4480 0 0 0 0 0
+88 624671 0 0 212482 0 0 0 0 0
+94 13440 1 1 4480 0 0 0 0 0
+95 7000 0 0 0 0 0 3500 0 0
+99 8960 0 0 0 0 0 0 0 0
+100 8960 0 0 0 0 0 0 0 0
+102 4093 0 0 0 0 0 0 0 0
+105 53209 0 0 12279 0 0 8186 0 0
+109 8960 0 0 0 0 0 0 0 0
+110 16936 0 0 4234 0 0 4234 0 0
+111 4234 0 0 0 0 0 4234 1 0
+123 22400 0 0 17920 0 0 0 0 0
+fn=assertResult(result_t&, result_t&)
+35 98 0 0 0 0 0 56 0 0
+37 56 0 0 28 1 0 0 0 0
+43 4228 2 2 0 0 0 0 0 0
+44 8456 0 0 2828 134 0 0 0 0
+62 84 0 0 70 0 0 0 0 0
+fn=f(int*)
+166 71076 0 0 41461 100 1 0 0 0
+167 5923 0 0 5923 0 0 0 0 0
+fn=freeResult(result_t&)
+79 132 0 0 33 0 0 0 0 0
+fn=hipta_processRow(void*)
+65 12840 14 1 12840 165 0 0 0 0
+fn=initResult(int, result_t&)
+72 175 1 1 0 0 0 70 0 0
+73 140 1 1 0 0 0 70 0 0
+74 35 0 0 0 0 0 35 0 0
+75 35 0 0 0 0 0 35 0 0
+76 140 0 0 105 0 0 0 0 0
+fn=main
+159 28700 0 0 5740 23 0 5740 151 0
+169 44 14 2 3 0 0 7 0 0
+178 2 1 1 0 0 0 2 0 0
+183 3 0 0 0 0 0 1 0 0
+184 5 0 0 0 0 0 2 1 0
+189 330 1 1 1 0 0 0 0 0
+190 656 0 0 0 0 0 328 19 19
+192 8 0 0 0 0 0 0 0 0
+193 16 0 0 0 0 0 8 0 0
+196 6 0 0 0 0 0 1 0 0
+199 8 0 0 0 0 0 0 0 0
+201 24 1 1 8 0 0 4 0 0
+202 1312 0 0 0 0 0 0 0 0
+203 1312 0 0 0 0 0 656 38 38
+205 4 0 0 0 0 0 0 0 0
+210 1 0 0 0 0 0 1 0 0
+211 2 0 0 0 0 0 1 0 0
+214 4 1 1 0 0 0 1 0 0
+216 3 0 0 0 0 0 1 0 0
+217 9 1 1 1 0 0 2 0 0
+220 5 0 0 1 0 0 2 0 0
+221 4 0 0 2 0 0 0 0 0
+222 42 0 0 0 0 0 0 0 0
+223 60 0 0 0 0 0 20 0 0
+225 60 1 1 0 0 0 20 0 0
+226 180 0 0 0 0 0 40 0 0
+227 100 1 1 0 0 0 40 0 0
+228 40 0 0 0 0 0 20 0 0
+233 4 1 0 2 0 0 1 0 0
+234 3 0 0 2 0 0 0 0 0
+235 27 0 0 14 0 0 0 0 0
+238 42 2 1 0 0 0 14 0 0
+240 42 0 0 0 0 0 14 0 0
+241 140 10 1 14 0 0 42 0 0
+244 14 0 0 0 0 0 14 0 0
+246 28 0 0 0 0 0 14 0 0
+247 70 1 1 14 0 0 28 0 0
+250 42 0 0 0 0 0 14 0 0
+260 14 0 0 0 0 0 14 0 0
+261 26 0 0 0 0 0 13 0 0
+263 26 0 0 0 0 0 13 0 0
+fn=ta(int**, int, int**, int, double (*)(int*), int, result_t&)
+65 10920 0 0 10920 7 0 0 0 0
+125 273 1 1 21 0 0 42 0 0
+130 315 2 2 21 0 0 210 0 0
+133 105 0 0 0 0 0 21 0 0
+134 2751 0 0 1344 0 0 0 0 0
+135 21840 1 1 6825 0 0 0 0 0
+137 38220 0 0 10920 0 0 0 0 0
+138 2688 0 0 0 0 0 2688 0 0
+139 10752 1 1 2688 0 0 8064 0 0
+140 22911 0 0 10752 0 0 2688 0 0
+142 16380 0 0 5460 0 0 5460 0 0
+144 4095 1 1 1365 0 0 1365 0 0
+145 9450 0 0 4977 0 0 0 0 0
+149 84 0 0 0 0 0 0 0 0
+150 147 1 1 126 0 0 0 0 0
+fn=void std::__insertion_sort<int*, Comparator>(int*, int*, Comparator)
+31 240 0 0 180 0 0 0 0 0
+fn=void std::__introsort_loop<int*, long, Comparator>(int*, int*, long, Comparator)
+31 7180 2 2 4910 1 0 0 0 0
+fn=void std::__unguarded_linear_insert<int*, Comparator>(int*, Comparator) [clone .isra.7]
+31 5644 0 0 1844 0 0 0 0 0
+fl=/home/stianlik/Prosjekter/fordypning/src/threadpool.cpp
+fn=hipta_threadpool(ThreadPool*)
+68 204 3 1 0 0 0 102 0 0
+69 102 0 0 102 0 0 0 0 0
+70 204 0 0 0 0 0 102 0 0
+73 204 14 1 0 0 0 102 0 0
+75 204 0 0 0 0 0 102 0 0
+76 204 0 0 0 0 0 102 0 0
+114 156 0 0 0 0 0 78 0 0
+115 648 14 1 164 0 0 0 0 0
+116 258 0 0 0 0 0 86 0 0
+118 156 0 0 0 0 0 78 0 0
+fn=hipta_worker(void*)
+82 256 0 0 0 0 0 128 0 0
+83 508 0 0 248 0 0 0 0 0
+84 292 15 1 146 0 0 0 0 0
+85 50 0 0 0 0 0 25 0 0
+88 363 0 0 0 0 0 121 0 0
+92 204 1 1 102 0 0 102 5 0
+94 204 0 0 0 0 0 102 0 0
+100 75 0 0 0 0 0 25 0 0
+101 25 0 0 25 0 0 0 0 0
+102 50 0 0 0 0 0 25 0 0
+103 50 0 0 0 0 0 25 0 0
+107 230 0 0 0 0 0 102 0 0
+108 102 0 0 102 0 0 0 0 0
+109 230 0 0 0 0 0 102 0 0
+110 306 0 0 0 0 0 102 0 0
+fn=main
+24 84 14 1 14 0 0 56 1 1
+26 70 0 0 0 0 0 70 1 1
+27 168 0 0 14 0 0 98 1 1
+28 70 14 1 0 0 0 70 0 0
+29 140 0 0 0 0 0 84 0 0
+30 70 9 1 0 0 0 70 2 1
+31 126 0 0 0 0 0 84 0 0
+32 54 2 1 16 0 0 34 0 0
+33 28 1 1 14 0 0 14 0 0
+34 146 0 0 12 0 0 0 0 0
+35 130 0 0 0 0 0 26 0 0
+42 14 0 0 0 0 0 14 0 0
+43 28 0 0 14 0 0 14 0 0
+46 56 0 0 0 0 0 14 0 0
+47 99 2 1 33 0 0 0 0 0
+48 60 0 0 0 0 0 20 0 0
+50 26 0 0 0 0 0 13 0 0
+53 153 1 1 35 0 0 0 0 0
+54 88 0 0 44 3 0 22 0 0
+56 52 0 0 13 0 0 13 0 0
+59 26 0 0 0 0 0 13 0 0
+60 26 0 0 13 0 0 13 0 0
+61 26 0 0 0 0 0 13 0 0
+62 26 0 0 0 0 0 13 0 0
+fl=/home/stianlik/Prosjekter/fordypning/src/tictoc.cpp
+fn=tic()
+5 35 2 1 0 0 0 35 0 0
+6 210 0 0 35 2 1 105 3 1
+7 70 0 0 70 0 0 0 0 0
+fn=toc()
+9 34 0 0 0 0 0 0 0 0
+10 204 1 1 68 2 0 68 0 0
+11 68 0 0 34 0 0 0 0 0
+fl=/home/stianlik/Prosjekter/fordypning/src/wtime.c
+fn=wtime()
+33 69 2 1 0 0 0 0 0 0
+38 69 0 0 0 0 0 69 0 0
+39 69 0 0 0 0 0 69 0 0
+41 207 0 0 0 0 0 69 0 0
+43 69 0 0 69 0 0 0 0 0
+44 207 0 0 138 2 1 0 0 0
+47 138 0 0 69 0 0 0 0 0
+fl=/usr/include/stdlib.h
+fn=read_table(char const*, int**, int, int)
+285 2560 1 1 0 0 0 1280 3 0
+fl=/usr/lib/gcc/x86_64-unknown-linux-gnu/4.7.2/../../../../include/c++/4.7.2/bits/move.h
+fn=main
+176 28 0 0 28 0 0 0 0 0
+177 266 17 2 126 0 0 140 0 0
+178 140 0 0 0 0 0 140 0 0
+fn=void std::__introsort_loop<int*, long, Comparator>(int*, int*, long, Comparator)
+177 1583 1 0 768 0 0 815 0 0
+178 3473 1 1 860 0 0 815 0 0
+fl=/usr/lib/gcc/x86_64-unknown-linux-gnu/4.7.2/../../../../include/c++/4.7.2/bits/stl_algo.h
+fn=main
+2219 1780 0 0 0 0 0 0 0 0
+2220 2368 0 0 0 0 0 592 0 0
+2252 36 1 1 0 0 0 16 0 0
+5514 36 1 1 4 0 0 12 1 0
+fn=void std::__insertion_sort<int*, Comparator>(int*, int*, Comparator)
+2178 112 2 2 0 0 0 36 0 0
+2181 8 0 0 0 0 0 0 0 0
+2183 204 0 0 0 0 0 0 0 0
+2185 240 2 2 180 0 0 0 0 0
+2193 240 0 0 60 0 0 60 0 0
+2195 32 0 0 28 0 0 0 0 0
+fn=void std::__introsort_loop<int*, long, Comparator>(int*, int*, long, Comparator)
+112 224 0 0 112 0 0 0 0 0
+114 68 0 0 56 0 0 0 0 0
+116 2 0 0 0 0 0 0 0 0
+119 100 0 0 0 0 0 0 0 0
+121 84 0 0 0 0 0 0 0 0
+2289 5326 0 0 3330 0 0 0 0 0
+2290 841 0 0 0 0 0 0 0 0
+2291 824 0 0 0 0 0 0 0 0
+2292 3188 0 0 1698 0 0 0 0 0
+2293 437 0 0 0 0 0 0 0 0
+2294 1648 0 0 0 0 0 0 0 0
+2297 768 0 0 0 0 0 0 0 0
+2319 112 0 0 0 0 0 0 0 0
+2349 780 1 1 0 0 0 540 8 0
+2353 464 1 1 0 0 0 0 0 0
+2355 284 0 0 29 0 0 0 0 0
+2360 56 0 0 0 0 0 0 0 0
+2363 280 1 1 112 0 0 56 0 0
+2366 480 1 1 420 0 0 0 0 0
+fn=void std::__unguarded_linear_insert<int*, Comparator>(int*, Comparator) [clone .isra.7]
+2136 652 1 1 0 0 0 652 0 0
+2140 652 0 0 652 0 0 0 0 0
+2142 652 0 0 0 0 0 0 0 0
+2143 6238 1 1 3576 0 0 0 0 0
+2145 540 0 0 0 0 0 540 0 0
+2147 1458 0 0 0 0 0 0 0 0
+2149 652 0 0 0 0 0 652 0 0
+2150 1304 0 0 1304 0 0 0 0 0
+fl=/usr/lib/gcc/x86_64-unknown-linux-gnu/4.7.2/../../../../include/c++/4.7.2/bits/stl_deque.h
+fn=hipta_threadpool(ThreadPool*)
+1373 510 0 0 204 0 0 0 0 0
+1377 204 0 0 0 0 0 102 0 0
+fn=hipta_worker(void*)
+1404 510 0 0 204 0 0 0 0 0
+1408 204 0 0 0 0 0 102 0 0
+fn=main
+134 224 4 3 0 0 0 224 3 1
+138 112 14 1 112 0 0 0 0 0
+454 42 0 0 0 0 0 14 0 0
+472 42 0 0 0 0 0 14 0 0
+473 42 14 1 14 0 0 0 0 0
+503 28 0 0 0 0 0 28 0 0
+514 28 0 0 0 0 0 28 0 0
+907 54 15 2 13 0 0 27 0 0
+fn=std::_Deque_base<void*, std::allocator<void*> >::_M_initialize_map(unsigned long)
+237 28 0 0 0 0 0 28 0 0
+238 112 0 0 56 0 0 56 0 0
+239 112 1 1 0 0 0 56 0 0
+582 224 2 2 0 0 0 140 0 0
+586 84 0 0 0 0 0 0 0 0
+588 112 0 0 0 0 0 28 0 0
+590 28 0 0 0 0 0 28 0 0
+598 112 0 0 28 0 0 0 0 0
+599 28 0 0 0 0 0 0 0 0
+612 56 0 0 0 0 0 28 0 0
+613 28 0 0 0 0 0 28 0 0
+614 84 0 0 0 0 0 28 0 0
+617 168 0 0 168 0 0 0 0 0
+627 196 1 1 0 0 0 0 0 0
+628 28 0 0 0 0 0 28 1 1
+fn=std::_Deque_base<void*, std::allocator<void*> >::~_Deque_base()
+561 108 1 1 0 0 0 81 0 0
+564 81 0 0 27 0 0 0 0 0
+566 81 0 0 54 0 0 0 0 0
+570 81 0 0 81 0 0 0 0 0
+642 189 0 0 27 0 0 0 0 0
+fl=/usr/lib/gcc/x86_64-unknown-linux-gnu/4.7.2/../../../../include/c++/4.7.2/bits/stl_queue.h
+fn=hipta_threadpool(ThreadPool*)
+212 28 0 0 0 0 0 14 0 0
+fl=/usr/lib/gcc/x86_64-unknown-linux-gnu/4.7.2/../../../../include/c++/4.7.2/ext/new_allocator.h
+fn=hipta_threadpool(ThreadPool*)
+110 472 0 0 102 0 0 102 3 1
+fn=std::_Deque_base<void*, std::allocator<void*> >::_M_initialize_map(unsigned long)
+94 112 0 0 0 0 0 56 0 0
+fn=std::_Deque_base<void*, std::allocator<void*> >::~_Deque_base()
+100 81 0 0 27 0 0 27 0 0
+fl=/usr/lib/gcc/x86_64-unknown-linux-gnu/4.7.2/../../../../include/c++/4.7.2/tuple
+fn=hipta_worker(void*)
+501 248 0 0 248 0 0 0 0 0
+fl=???
+fn=(below main)
+0 58 5 5 17 3 0 16 0 0
+fn=???
+0 27531 261 122 26565 189 6 373 13 10
+fn=_IO_default_finish
+0 14 2 2 4 0 0 1 0 0
+fn=_IO_default_uflow
+0 20 1 1 10 0 0 5 0 0
+fn=_IO_default_xsputn
+0 417 3 3 138 0 0 31 0 0
+fn=_IO_do_write@@GLIBC_2.2.5
+0 463 15 1 78 0 0 77 0 0
+fn=_IO_doallocbuf
+0 26 2 2 12 1 0 4 0 0
+fn=_IO_file_close
+0 2 1 1 1 0 0 0 0 0
+fn=_IO_file_close_it@@GLIBC_2.2.5
+0 48 6 6 11 0 0 16 0 0
+fn=_IO_file_doallocate
+0 95 5 5 20 1 0 12 0 0
+fn=_IO_file_finish@@GLIBC_2.2.5
+0 8 2 2 2 0 0 1 0 0
+fn=_IO_file_fopen@@GLIBC_2.2.5
+0 55 6 6 10 1 1 8 0 0
+fn=_IO_file_init@@GLIBC_2.2.5
+0 13 1 1 4 0 0 5 0 0
+fn=_IO_file_open
+0 34 3 3 6 0 0 7 0 0
+fn=_IO_file_overflow@@GLIBC_2.2.5
+0 10486 36 6 2971 0 0 1630 0 0
+fn=_IO_file_read
+0 8 1 1 4 0 0 0 0 0
+fn=_IO_file_stat
+0 8 1 1 2 0 0 0 0 0
+fn=_IO_file_underflow@@GLIBC_2.2.5
+0 84 5 5 29 1 0 21 0 0
+fn=_IO_file_write@@GLIBC_2.2.5
+0 1368 44 2 304 0 0 190 0 0
+fn=_IO_file_xsputn@@GLIBC_2.2.5
+0 8773 6 6 1610 4 1 1014 3 0
+fn=_IO_getline
+0 322 1 1 0 0 0 0 0 0
+fn=_IO_getline_info
+0 10141 6 6 2415 0 0 2093 0 0
+fn=_IO_link_in
+0 103 10 10 36 3 1 18 0 0
+fn=_IO_no_init
+0 33 4 4 5 0 0 20 2 2
+fn=_IO_old_init
+0 24 2 2 2 0 0 19 2 2
+fn=_IO_setb
+0 63 1 1 19 0 0 15 0 0
+fn=_IO_switch_to_get_mode
+0 40 2 2 14 0 0 12 0 0
+fn=_IO_un_link
+0 108 9 9 41 0 0 16 0 0
+fn=_IO_unsave_markers
+0 5 1 1 3 0 0 0 0 0
+fn=_L_cond_lock_515
+0 210 2 2 0 0 0 42 14 1
+fn=_L_lock_513
+0 80 1 1 0 0 0 16 0 0
+fn=_L_unlock_390
+0 1430 0 0 0 0 0 286 21 0
+fn=__GI_memcpy
+0 3845 3 3 545 0 0 385 0 0
+fn=__GI_mempcpy
+0 3137 3 3 351 0 0 178 14 0
+fn=__GI_memset
+0 1651 56 11 106 22 3 491 5 4
+fn=__GI_strlen
+0 802 17 3 109 10 7 0 0 0
+fn=__GI_strrchr
+0 44 3 3 3 1 0 0 0 0
+fn=__GI_strstr
+0 27 4 4 9 1 1 6 0 0
+fn=____strtol_l_internal
+0 79040 13 13 11040 6 4 5760 0 0
+fn=__acos_finite
+0 7 1 1 3 0 0 1 0 0
+fn=__asin_finite
+0 7 1 1 3 0 0 1 0 0
+fn=__atan2_finite
+0 10 2 2 3 0 0 1 0 0
+fn=__close_nocancel
+0 5 1 1 1 0 0 0 0 0
+fn=__ctype_init
+0 432 4 2 270 41 0 81 0 0
+fn=__cxa_atexit
+0 8 1 1 0 0 0 0 0 0
+fn=__cxa_guard_acquire
+0 27 3 3 8 1 0 6 0 0
+fn=__cxa_guard_release
+0 7 1 1 4 0 0 0 0 0
+fn=__deallocate_stack
+0 770 29 4 242 5 0 242 0 0
+fn=__default_morecore
+0 14 1 1 2 0 0 2 0 0
+fn=__exp_finite
+0 10 2 2 3 0 0 1 0 0
+fn=__fopen_internal
+0 39 4 4 4 0 0 10 1 1
+fn=__fopen_maybe_mmap
+0 4 1 1 2 0 0 0 0 0
+fn=__free_tcb
+0 264 13 1 88 0 0 22 0 0
+fn=__get_cpu_features
+0 60 1 1 24 0 0 0 0 0
+fn=__init_cpu_features
+0 148 16 16 10 1 1 22 0 0
+fn=__init_misc
+0 24 2 2 7 0 0 5 1 0
+fn=__internal_atexit
+0 96 2 2 20 0 0 32 2 0
+fn=__libc_csu_init
+0 34 3 3 8 1 0 8 0 0
+fn=__libc_disable_asynccancel
+0 168 17 2 42 0 0 0 0 0
+fn=__libc_dl_error_tsd
+0 3 0 0 3 1 0 0 0 0
+fn=__libc_enable_asynccancel
+0 154 1 1 42 0 0 0 0 0
+fn=__libc_memalign
+0 1466 4 4 278 3 0 273 6 3
+fn=__libc_pthread_init
+0 393 2 2 110 7 0 58 7 7
+fn=__libc_sigaction
+0 128 7 7 38 0 0 38 1 0
+fn=__libc_thread_freeres
+0 700 1 1 175 17 0 150 0 0
+fn=__linkin_atfork
+0 9 1 1 4 2 0 1 0 0
+fn=__lll_lock_wait
+0 1610 3 2 545 0 0 162 0 0
+fn=__lll_unlock_wake
+0 3120 1 1 936 0 0 936 0 0
+fn=__log_finite
+0 10 1 1 3 0 0 1 0 0
+fn=__memmove_ssse3_back
+0 255787 71 9 79667 82 9 69027 143 42
+fn=__mpn_extract_double
+0 714 19 3 68 0 0 170 3 0
+fn=__mpn_lshift
+0 510 29 2 68 0 0 34 2 0
+fn=__mpn_mul
+0 1755 34 4 495 4 1 495 6 0
+fn=__mpn_mul_1
+0 4928 5 4 692 0 0 481 15 0
+fn=__mpn_rshift
+0 816 45 3 144 0 0 96 0 0
+fn=__new_exitfn
+0 164 5 5 44 4 1 17 0 0
+fn=__nptl_deallocate_tsd
+0 125 16 3 50 0 0 0 0 0
+fn=__open_nocancel
+0 5 0 0 1 0 0 0 0 0
+fn=__overflow
+0 1656 30 2 828 0 0 0 0 0
+fn=__pow_finite
+0 7 2 2 3 0 0 1 0 0
+fn=__printf_fp
+0 27130 442 67 5815 87 6 3826 26 0
+fn=__pthread_disable_asynccancel
+0 2976 2 2 744 13 0 0 0 0
+fn=__pthread_enable_asynccancel
+0 2750 1 1 750 11 0 0 0 0
+fn=__pthread_initialize_minimal
+0 151 13 13 21 4 0 59 7 2
+fn=__pthread_mutex_cond_lock
+0 5175 2 2 1125 9 0 225 0 0
+fn=__pthread_mutex_unlock_usercnt
+0 121194 4 2 33501 2 0 6746 0 0
+fn=__read_nocancel
+0 10 1 1 2 0 0 0 0 0
+fn=__register_atfork
+0 50 5 5 12 3 3 10 0 0
+fn=__rpc_thread_destroy
+0 275 5 3 125 1 0 50 0 0
+fn=__sched_cpucount
+0 10 2 2 3 0 0 0 0 0
+fn=__sigjmp_save
+0 243 0 0 54 0 0 54 0 0
+fn=__sigsetjmp
+0 885 32 4 213 0 0 384 18 6
+fn=__tls_get_addr
+0 275 4 2 175 20 0 0 0 0
+fn=__uflow
+0 46 3 3 20 1 0 2 0 0
+fn=__write_nocancel
+0 120 0 0 24 0 0 0 0 0
+fn=_dl_add_to_namespace_list
+0 430 2 2 107 0 0 62 0 0
+fn=_dl_add_to_slotinfo
+0 63 2 2 24 9 0 15 4 0
+fn=_dl_addr
+0 57865 12 12 13574 1032 823 18 2 0
+fn=_dl_allocate_tls
+0 28 3 2 0 0 0 4 0 0
+fn=_dl_allocate_tls_init
+0 4347 101 7 1377 62 0 594 2 1
+fn=_dl_allocate_tls_storage
+0 325 3 3 5 0 0 292 36 36
+fn=_dl_cache_libcmp
+0 6986 3 3 1083 58 57 0 0 0
+fn=_dl_catch_error
+0 777 3 3 252 0 0 357 5 5
+fn=_dl_check_all_versions
+0 159 2 2 25 0 0 14 0 0
+fn=_dl_check_map_versions
+0 6530 15 15 2035 48 36 811 60 55
+fn=_dl_debug_initialize
+0 89 4 3 31 0 0 4 0 0
+fn=_dl_debug_state
+0 2 0 0 2 0 0 0 0 0
+fn=_dl_determine_tlsoffset
+0 146 6 6 23 2 1 12 0 0
+fn=_dl_discover_osversion
+0 79 6 6 14 1 1 7 1 1
+fn=_dl_fixup
+0 4833 10 8 1740 205 34 589 3 2
+fn=_dl_get_tls_static_info
+0 5 1 1 3 0 0 2 1 1
+fn=_dl_higher_prime_number
+0 144 1 1 14 2 1 0 0 0
+fn=_dl_important_hwcaps
+0 247 19 19 46 0 0 40 3 3
+fn=_dl_init
+0 144 4 4 31 3 0 18 0 0
+fn=_dl_init_paths
+0 91 9 9 14 0 0 28 1 1
+fn=_dl_initial_error_catch_tsd
+0 46 1 1 23 0 0 0 0 0
+fn=_dl_load_cache_lookup
+0 2091 15 15 329 51 50 148 0 0
+fn=_dl_lookup_symbol_x
+0 503367 17 10 84691 1315 1078 27448 19 9
+fn=_dl_map_object
+0 4716 23 23 1122 1 1 631 4 4
+fn=_dl_map_object_deps
+0 4855 34 34 990 25 2 374 3 3
+fn=_dl_map_object_from_fd
+0 7223 46 46 1683 68 68 767 79 79
+fn=_dl_name_match_p
+0 19331 2 2 5003 71 0 2873 4 1
+fn=_dl_new_object
+0 1686 11 11 296 10 10 315 58 58
+fn=_dl_next_ld_env_entry
+0 340 2 2 115 27 27 1 0 0
+fn=_dl_next_tls_modid
+0 24 2 2 9 0 0 3 0 0
+fn=_dl_protect_relro
+0 133 2 2 42 0 0 14 0 0
+fn=_dl_receive_error
+0 28 3 3 10 0 0 12 0 0
+fn=_dl_relocate_object
+0 213393 46 46 54206 4074 3147 16562 1125 734
+fn=_dl_runtime_resolve
+0 1197 4 3 513 0 0 456 3 2
+fn=_dl_setup_hash
+0 250 2 2 70 12 12 60 0 0
+fn=_dl_start
+0 853 21 21 172 28 27 63 19 18
+fn=_dl_sysdep_read_whole_file
+0 41 4 4 6 0 0 9 0 0
+fn=_dl_sysdep_start
+0 424 13 13 118 17 16 27 3 3
+fn=_dl_sysdep_start_cleanup
+0 1 1 1 1 0 0 0 0 0
+fn=_dl_unload_cache
+0 10 1 1 3 1 0 2 0 0
+fn=_dl_vdso_vsym
+0 35 4 3 15 2 0 0 0 0
+fn=_fxstat
+0 110 3 3 11 0 0 0 0 0
+fn=_init
+0 100 6 6 17 6 0 17 5 3
+fn=_int_free
+0 16176 91 19 4510 27 0 2122 0 0
+fn=_int_malloc
+0 56489 156 46 7474 66 1 7973 125 110
+fn=_itoa_word
+0 748 9 3 68 7 1 34 0 0
+fn=_pthread_cleanup_pop
+0 110 0 0 44 0 0 22 0 0
+fn=_pthread_cleanup_pop_restore
+0 288 16 1 108 0 0 36 0 0
+fn=_pthread_cleanup_push
+0 132 2 2 44 0 0 88 0 0
+fn=_pthread_cleanup_push_defer
+0 504 4 1 108 3 0 180 0 0
+fn=_setjmp
+0 54 15 1 0 0 0 0 0 0
+fn=_wordcopy_fwd_aligned
+0 69 6 6 19 1 1 13 0 0
+fn=access
+0 9 1 1 1 0 0 1 0 0
+fn=allocate_dtv
+0 95 5 1 20 0 0 25 1 1
+fn=arena_get2.isra.4
+0 1198 19 11 396 19 0 140 4 4
+fn=arena_thread_freeres
+0 525 4 2 225 22 0 75 0 0
+fn=bcmp
+0 2639 13 13 669 9 9 214 4 4
+fn=brk
+0 35 2 2 5 0 0 3 0 0
+fn=bsearch
+0 1820 6 6 328 0 0 236 0 0
+fn=cache_rpath
+0 146 2 2 46 0 0 2 0 0
+fn=call_init
+0 656 4 4 195 43 0 91 0 0
+fn=calloc
+0 531 11 9 80 0 0 32 0 0
+fn=check_match.11334
+0 64477 7 6 27116 334 166 7760 23 3
+fn=clone
+0 702 30 3 104 0 0 78 26 4
+fn=close
+0 45 0 0 9 0 0 0 0 0
+fn=cos
+0 10 2 2 3 0 0 1 0 0
+fn=dl_main
+0 1322 74 74 297 47 20 146 17 16
+fn=do_clone.constprop.4
+0 832 7 3 156 0 0 156 0 0
+fn=do_lookup_x
+0 461666 29 29 152457 2740 664 70182 53 33
+fn=do_preload
+0 27 3 3 7 0 0 8 0 0
+fn=expand_dynamic_string_token
+0 22 2 2 5 0 0 6 0 0
+fn=fclose@@GLIBC_2.2.5
+0 73 7 7 26 1 0 10 0 0
+fn=fgets
+0 10942 5 5 3058 0 0 1448 0 0
+fn=floor
+0 6 2 2 2 0 0 1 0 0
+fn=floorf
+0 6 1 1 2 0 0 1 0 0
+fn=fopen@@GLIBC_2.2.5
+0 2 1 1 0 0 0 0 0 0
+fn=free
+0 5714 22 4 1798 40 0 2 0 0
+fn=getenv
+0 4224 4 4 1428 33 0 84 0 0
+fn=getpagesize
+0 260 5 1 156 4 0 0 0 0
+fn=getrlimit
+0 5 1 1 1 0 0 0 0 0
+fn=gettimeofday
+0 120 6 3 10 1 0 10 0 0
+fn=hack_digit.14947
+0 6736 25 4 2036 0 0 1018 3 0
+fn=handle_intel
+0 180 10 10 28 0 0 40 0 0
+fn=index
+0 935 2 2 81 8 8 0 0 0
+fn=init_cacheinfo
+0 287 14 14 19 1 1 27 3 3
+fn=init_tls
+0 107 5 5 27 10 1 15 1 1
+fn=intel_02_known_compare
+0 648 2 2 324 12 12 0 0 0
+fn=intel_check_word
+0 896 18 18 48 0 0 72 0 0
+fn=isinf
+0 442 15 1 34 0 0 0 0 0
+fn=isnan
+0 238 30 2 34 0 0 0 0 0
+fn=local_strdup
+0 136 2 2 16 0 0 32 0 0
+fn=madvise
+0 125 3 1 25 0 0 0 0 0
+fn=malloc
+0 16518 58 6 4870 10 1 1489 9 3
+fn=malloc_consolidate
+0 8150 12 8 2260 0 0 758 12 0
+fn=malloc_hook_ini
+0 8 1 1 2 0 0 3 0 0
+fn=malloc_init_state
+0 3870 6 2 10 0 0 1281 165 164
+fn=map_doit
+0 12 2 2 5 0 0 3 0 0
+fn=match_symbol
+0 4127 4 4 1587 42 38 405 0 0
+fn=memchr
+0 3603 8 8 347 27 27 0 0 0
+fn=memcpy
+0 1038 6 6 162 0 0 127 21 21
+fn=memcpy@GLIBC_2.2.5
+0 13 2 1 4 2 0 0 0 0
+fn=memmove
+0 352 3 3 53 0 0 50 0 0
+fn=mempcpy
+0 1681 7 5 182 5 1 91 10 10
+fn=memset
+0 4088 84 16 205 37 6 2136 214 191
+fn=mmap
+0 216 4 2 36 0 0 0 0 0
+fn=mprotect
+0 115 3 2 23 0 0 0 0 0
+fn=munmap
+0 30 0 0 6 0 0 0 0 0
+fn=new_do_write
+0 1520 63 5 494 6 0 380 0 0
+fn=new_heap
+0 195 11 7 28 0 0 35 6 6
+fn=open
+0 47 2 2 10 0 0 0 0 0
+fn=open_verify
+0 1478 13 13 324 6 6 133 1 1
+fn=openaux
+0 340 1 1 160 0 0 60 0 0
+fn=operator delete(void*)
+0 561 1 1 0 0 0 0 0 0
+fn=operator delete[](void*)
+0 95 1 1 0 0 0 0 0 0
+fn=operator new(unsigned long)
+0 5460 2 2 1092 0 0 1092 0 0
+fn=operator new[](unsigned long)
+0 1072 1 1 268 1 0 268 0 0
+fn=popcount_cpucount
+0 103 0 0 17 0 0 0 0 0
+fn=printf
+0 986 19 3 102 6 0 612 0 0
+fn=pthread_attr_init@@GLIBC_2.2.5
+0 32 2 2 2 0 0 10 1 0
+fn=pthread_attr_setdetachstate
+0 5 2 2 2 0 0 0 0 0
+fn=pthread_cond_broadcast@@GLIBC_2.3.2
+0 462 17 3 140 0 0 42 0 0
+fn=pthread_cond_destroy@@GLIBC_2.3.2
+0 780 4 4 312 0 0 182 0 0
+fn=pthread_cond_signal@@GLIBC_2.3.2
+0 6255 4 4 1987 0 0 13 0 0
+fn=pthread_cond_wait@@GLIBC_2.3.2
+0 16187 9 9 7007 14 0 2305 4 0
+fn=pthread_create@@GLIBC_2.2.5
+0 9769 161 27 2570 40 1 1724 50 28
+fn=pthread_getaffinity_np@@GLIBC_2.3.4
+0 20 2 2 2 0 0 1 0 0
+fn=pthread_join
+0 1134 31 5 250 1 0 220 0 0
+fn=pthread_key_create
+0 20 3 3 3 1 0 2 0 0
+fn=pthread_mutex_destroy
+0 21024 3 1 7008 74 0 2336 0 0
+fn=pthread_mutex_init
+0 73920 19 3 11550 14 1 16170 251 115
+fn=pthread_mutex_lock
+0 156485 5 3 39121 43 0 6521 0 0
+fn=pthread_mutex_unlock
+0 13036 14 1 0 0 0 0 0 0
+fn=pthread_self
+0 2 1 1 2 0 0 0 0 0
+fn=ptmalloc_init
+0 386 7 7 127 45 2 15 4 2
+fn=puts
+0 251 6 6 100 5 0 33 0 0
+fn=read
+0 44 2 2 10 0 0 0 0 0
+fn=res_thread_freeres
+0 200 0 0 125 30 4 25 0 0
+fn=rint
+0 6 1 1 2 0 0 1 0 0
+fn=rintf
+0 6 1 1 2 0 0 1 0 0
+fn=rtld_lock_default_lock_recursive
+0 118 1 1 118 3 1 0 0 0
+fn=rtld_lock_default_unlock_recursive
+0 118 0 0 118 0 0 0 0 0
+fn=sbrk
+0 67 5 5 19 3 2 10 1 1
+fn=sin
+0 10 1 1 3 0 0 1 0 0
+fn=start_thread
+0 2015 83 7 636 21 0 385 31 8
+fn=std::error_category::error_category()
+0 12 1 1 6 1 0 3 0 0
+fn=std::future_category()
+0 20 2 2 2 1 1 5 0 0
+fn=strcasecmp
+0 7 2 2 3 1 1 1 0 0
+fn=strchrnul
+0 2346 15 2 204 5 0 0 0 0
+fn=strcmp
+0 145682 1 1 43735 209 83 0 0 0
+fn=strerror_thread_freeres
+0 150 1 1 25 0 0 25 0 0
+fn=strlen
+0 1945 5 5 206 0 0 0 0 0
+fn=strncasecmp
+0 6 2 2 3 0 0 0 0 0
+fn=strnlen
+0 6 2 2 3 0 0 0 0 0
+fn=strsep
+0 914 2 2 148 0 0 1 0 0
+fn=strtok
+0 51104 4 4 7680 1 1 22400 0 0
+fn=strtol
+0 2560 1 1 1280 1 0 0 0 0
+fn=time
+0 60 3 3 5 1 1 5 0 0
+fn=uname
+0 5 1 1 1 0 0 0 0 0
+fn=version_check_doit
+0 10 1 1 4 0 0 2 0 0
+fn=vfprintf
+0 15804 358 53 4468 106 3 3434 64 0
+fn=write
+0 76 14 1 38 0 0 0 0 0
+summary: 4602023 4145 1561 1150012 12489 6504 404981 3104 1899

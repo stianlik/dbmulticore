@@ -1,0 +1,7 @@
+#!/bin/bash
+
+perf stat -e cpu-cycles,instructions,cache-references,cache-misses,branch-instructions,branch-misses,\
+branch-misses,bus-cycles,stalled-cycles-frontend,stalled-cycles-backend,ref-cycles,\
+faults,cpu-clock,context-switches,cpu-migrations,minor-faults,major-faults,\
+alignment-faults,L1-dcache-load-misses,L1-dcache-store-misses,LLC-loads,LLC-load-misses,\
+LLC-stores,LLC-store-misses,dTLB-load-misses,dTLB-store-misses,branch-load-misses $@

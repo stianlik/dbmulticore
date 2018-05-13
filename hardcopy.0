@@ -1,0 +1,35 @@
+ ta.cpp  hipta.cpp  threadpool.cpp                                                                                                                   X
+    for (int j = 0; j < hipta_data.tableLength; j += chunksize) {
+
+        // Process partsize rows per thread
+        hipta_calcLastRow(j, chunksize);
+        for (long row = j; row <= hipta_data.lastrow; row+=hipta_data.partsize) {
+            threadPool->push((void*) row);
+        }
+        threadPool->sync();
+
+        // Threshold (termination)
+        hipta_node_t *node = hipta_data.head;
+        int i;
+        for (i = 0; i < hipta_data.k && i < hipta_data.result->size; ++i) {
+            node = node->next;
+        }
+        worst = node->score.value;
+        printf("worst is %f, threshold is %f, worst index in result is %d\n", worst, hipta_data.threshold, i);
+        //worst = hipta_data.result->rows[hipta_data.result->size-1].value;
+        if (hipta_data.result->size >= hipta_data.k && worst >= hipta_data.threshold) {
+            break;
+        }
+    }
+    hipta_moveResultToArray();
+}
+
+void hipta_init(
+    int **table, int tableLength,
+    int **accessors,  int accessorsLength,
+    double (*f)(int *row),
+    int k, int partsize, result_t &result
+)
+{
+    // Shared data
+"hipta.cpp" 252L, 6285C written                                                                                                     189,30-36     80%

@@ -1,0 +1,15 @@
+\section{Suggested algorithm}
+
+Earlier work has given great consideration to parallellizing the join
+operator. A related operator is top-k join. Top-k join returns an
+ordered set of join results according to some provided function that
+combines the orders on each input \cite{topkjoin}.
+
+The top-k join operator should exploit orderings on each input, to
+avoid doing extra work for each relation to be included. This
+information is typically lost if the operator is implemented using an
+unmodified join operator in combination with the sorting function.
+This report tries to build on the work form \cite{topkjoin} by
+parallelizing the algorithm using methods presented in
+\ref{code-optimization} and \ref{sec:join-algorithms}. The
+purpose is to create an efficient multi-core top-k join algorithm.

@@ -1,0 +1,570 @@
+This chapter documents implementation and evaluation of HIPTA. First,
+methods and tools are described, including test environment and
+parameters. Second, implementation is described in terms of
+programming language, data structures and shared memory framework.
+Finally, the algorithm is evaluated based on several custom
+benchmarks.
+
+\section{Methods and tools}
+\label{sec:methods-and-tools}
+
+Tests are executed on a Debian Linux system equipped with two Intel
+Xeon 5650 processors, described in Table \ref{tab:environment}. Code
+is compiled using g++ with optimization level -O2 and the C++0x
+standard.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|l|}
+	\hline
+	Processors & 2x Intel Xeon 5650 @ 2.67 GHz \\
+	Cores per processor & 6 \\
+	Contexts per core & 2 \\
+	Cache size, sharing & 12MB L3, shared \\
+	Memory & 128GB \\
+	Operating system & Debian 7.0 (wheezy) \\
+	Kernel & 3.2.0-29-generic \\
+	\hline
+	\end{tabular}
+	\caption{Platform characteristics}
+	\label{tab:environment}
+\end{table}
+
+Intel Xeon 5650 is a part of the Nehalem-family. It has 6 physical
+cores which can run up to 12 hardware threads using hyper-threading.
+The general cache structure is described in Section
+\ref{sec:cache-hierarchy}. In short, each core has private L1 and L2
+caches, and all cores on one die share the bigger L3 cache. L3 is last
+level cache (LLC) for this architecture.
+
+Each test is executed 10 times and the median values are visually
+represented in multiple graphs. An important criteria is the
+performance effect of parallelism, therefore a predetermined set of
+thread counts are used in all tests. Reasoning for chosen thread
+counts are included in Table \ref{tab:threadcount}. The following
+parameters are evaluated in Section \ref{sec:implementation}:
+
+\begin{description}
+	\item[k] Number of records requested (i.e. top-$k$ records)
+	\item[n] Number of attributes considered in scoring function
+	\item[m] Number of records in input relation
+	\item[d] Input distribution
+	\item[t] Number of threads
+	\item[$p_{min}$] Minimum partition size
+	\item[$p_{max}$] Maximum partition size
+\end{description}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|l|}
+	\hline
+	Thread count & Test criteria \\ \hline
+	2 & Sequential performance for TA and HIPTA \\
+	2 & Performance of HIPTA with minimal amount of threads \\
+	12 & Performance of HIPTA with one thread per physical core \\
+	24 & Effect of Hyper-Threading (24 threads, where 12 is physical and 12 logical) \\
+	1042 & Locking and partitioning overhead vs. memory latency hiding \\
+	\hline
+	\end{tabular}
+	\caption{Reasoning for thread counts}
+	\label{tab:threadcount}
+\end{table}
+
+Three test relations are generated beforehand and stored as plain text
+files. Relations are used to test uniform, positively correlated, and
+negatively correlated input. Each attribute is represented as using an
+8B integer. To eliminate I/O delays from test results, input relations
+are read into memory before any tests are executed. Additionally, the
+query solution is generated using a simple, well-tested,
+implementation of sequential TA. To ensure that optimized algorithms
+are correct, results are compared to generated solutions after each
+test, if any errors are found, the test framework terminates with an
+error message and results are discarded.
+
+\section{Implementation}
+\label{sec:implementation}
+
+Algorithms are implemented using C++ and Pthreads. Aside from the
+additional synchronization and partitioning code, sequential and
+parallel algorithms use the same logic and data structures.
+Consistency and synchronization is implemented using atomic operations
+supported by GCC, in addition to standard pthread mutexes where
+necessary. To minimize thread creation/destruction overhead, a thread
+custom pool is used. Tasks are pushed to a concurrent queue by the
+master thread, while idle worker threads repeatedly request more work
+by polling the queue. Compared to creating new threads for each
+iteration, this technique proved very efficient.
+
+Input relation is represented as an array where data is stored
+row-wise, record key is represented as array index. Sorted access for
+attributes is implemented using one sorted array per attribute, each
+entry includes an integer, holding the record key. Similarly, results
+are stored in an of structures, each structure includes record key and
+score. Additionally, the result structure includes meta data, like
+size (number of records processed) and capacity (requested number of
+records).
+
+Every time a new result is processed, the result structure needs to be
+updated. To avoid race conditions, worker threads lock the entire
+structure before before updating. The structure is kept sorted at all
+times using memory move operations. Obviously, this is a critical
+section and a bottleneck for the parallel algorithm. In order to allow
+more fine-grained locking, other data structures, like binary trees
+were considered. However, the array structure is easy to implement,
+and proved efficient in combination with a small optimization. The
+lowest scored value is stored in a separate variable and compared to
+the current record before result is updated. This is done using atomic
+operations, thereby incurring a minimal synchronization overhead.
+This allows records that are irrelevant to be quickly discarded
+without searching (or locking) the result structure.
+
+\section{Experimental evaluation}
+
+This section evaluates HIPTA using a number of custom benchmarks. Each
+parameter is examined and discussed. Where results differ from the
+expected outcome, possible reasons are explored, and appropriate
+optimizations are suggested. Input data is specified in a table before
+each test and results are presented using a standard set of graphs
+which display runtime, speedup, work, and variations in test results.
+
+\subsection{Number of requested records}
+\label{sec:test1}
+
+To evaluate the effect of differing $k$ values, both algorithms are
+executed with parameters in Table \ref{tab:test1-params}. It is
+expected that increasing $k$ will increase the total runtime for both
+algorithms, but have a smaller effect on the parallel version. If
+assumptions are correct, HIPTA shows a positive degree of scale-up.
+However, a bigger $k$ will also force HIPTA to spend more time
+synchronizing, therefore that speedup may be limited.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|l|}
+	\hline
+	Parameter & Value(s) \\ \hline
+	$k$ & 5, 10, 50, 100, 1000, 5000, 10000 \\
+	n & 4\\
+	m & 128M\\
+	d & Uniform\\
+	t & 1, 2, 12, 24, 1024\\
+	$p_{min}$ & 50\\
+	$p_{max}$ & 500 \\
+	\hline
+	\end{tabular}
+	\caption{Test 1, input parameters}
+	\label{tab:test1-params}
+\end{table}
+
+As Figure \ref{fig:test1} shows, increasing $k$ will increase the amount
+of work required to produce a result. This is no surprise, however,
+requesting a bigger set of results will obviously require processing
+an increased number of records. Another observation is that the
+initial assumptions were correct, HIPTA does take advantage of an
+increasing amount of work. However, speedup is far from optimal, the
+best result for two threads shows a speedup of approximately 75\% of
+linear speedup. For higher thread counts, the relative speedup
+decreases, twelve threads only obtain of 25\% of linear speedup.
+
+Increasing number of threads to more than physical core count is
+sometimes used to hide memory latencies. When one thread stalls,
+another can work on other tasks. This in turn, allows the program to
+utilize all cores for useful work even if some threads are stalling.
+In this case, hiding memory latencies had a diminishing effect. It is
+likely that memory stalls incurs in a critical section of HIPTA,
+therefore an additional thread will not be able to do any processing
+before the stall is resolved. Increasing thread counts to more than
+the physical capacity seems to have an adverse effect on HIPTA.
+
+An unexpected observation is that all runs of HIPTA shows a decrease
+in performance when $k$ reaches 1000, this may be the effect of unsuited
+p$_{min}$ and p$_{max}$ values for the current input. These parameters
+are important to achieve an efficient partitioning strategy, and are
+evaluated in Section \ref{sec:partition-size}.
+
+\begin{figure}[H]
+	\centering
+	\testresult{execution-time}{Execution time}{img/test1/time} \qquad
+	\testresult{speedup}{Speedup}{img/test1/speedup} \\
+	\testresult{accuracy}{Execution time with variation}{img/test1/errorbar} \qquad
+	\testresult{work}{Work}{img/test1/work}
+	\caption{Test 1, increasing $k$}
+	\label{fig:test1}
+\end{figure}
+
+\subsection{Input size}
+
+The input size for top-$k$ search can variate in two dimensions.
+Horizontal input size be varied by increasing/decreasing number of
+attributes used in scoring function, while horizontal input size can
+be changed by increasing/decreasing number of records in relation.
+
+This test evaluates both horizontal and vertical scaling. First,
+horizontal scaling is evaluated using the parameters defined in Table
+\ref{tab:test2-params}. Second, horizontal scaling is evaluated using
+parameters defined in Table \ref{tab:test3-params}. It is expected
+that increases in both dimensions will show a positive effect on
+speedup due to an increased amount of work available for each thread.
+
+An interesting feature of this test is the effect of synchronization.
+Vertical scaling should have minimal effect on synchronization costs
+as score calculation is independent. In turn, this will give HIPTA an
+increased speedup as more work can be done in parallel without the
+additional synchronization overhead. For horizontal scaling, more
+synchronization will be needed as number of records increase,
+therefore it is expected that vertical scaling will show a greater
+speedup results than vertical.
+
+Note that the horizontal input size (m) in Table
+\ref{tab:test2-params} is low compared to other tests in this paper.
+The reason for this is that moving test data from disk to memory is
+very time-consuming and this test has to read data once for every step
+in the x-direction. Additionally, an increase horizontal input will
+increase work and reduce the effect of smaller vertical input.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|l|}
+	\hline
+	Parameter & Value(s) \\ \hline
+	$k$ & 1000 \\
+	n & 4, 8, 16, 32\\
+	m & 16M\\
+	d & Uniform\\
+	t & 1, 2, 12, 24, 1024\\
+	$p_{min}$ & 200\\
+	$p_{max}$ & 400 \\
+	\hline
+	\end{tabular}
+	\caption{Test 2, input parameters}
+	\label{tab:test2-params}
+\end{table}
+
+Figure \ref{fig:test2} shows that vertical scaling does increase
+speedup for HIPTA. This effect is limited, however, there is a peak at
+8 attributes, after that performance actually start to decrease.
+Looking closer at the input size reveals that each attribute adds 8
+byte to data amount required per score calculation (placed consecutive
+in memory). Using 8 attributes requires 64 bytes, exactly the line
+width for L1 and L2 data cache. It is common knowledge, that reading
+and writing cache in line width sized chunks is optimal. It is
+reasonable to attribute the performance decrease to the less optimal
+memory access pattern. An interesting observation is that the
+sequential algorithm shows a smaller performance decrease that the
+parallel version. This can not be attributed to synchronization costs,
+but may have something to do with memory bandwidth. Each thread in
+HIPTA needs to use an increased amount of memory bandwidth, increasing
+the likelihood of blocking other threads. It is possible that a
+two-step scoring function, calculating 8 attributes per round will
+reduce this effect.
+
+\begin{figure}[H] 
+\centering 
+\testresult{execution-time}{Execution time}{img/test2/time} \qquad
+\testresult{speedup}{Speedup}{img/test2/speedup} \\
+\testresult{accuracy}{Execution time with variation}{img/test2/errorbar} \qquad
+\testresult{work}{Work}{img/test2/work} 
+\caption{Test 2, vertical scaling} 
+\label{fig:test2} 
+\end{figure}
+
+Figure \ref{fig:test3} shows that an increased input size results in
+increasing speedup. However, speedup does not increase much when
+relation size is increased to more than 16M records. Comparing results
+for different thread counts, one can see that low thread count shows
+only a slight increase when horizontal input size increase. In
+contrast, runs with a higher number of threads, exhibit a
+significant improvement from 4M to 16M. It is assumed that 16M is
+a sufficient input size to fully utilize all cores in the test
+environment. For an increased number of physical cores, parallel
+speedup is expected to increase, also for input sizes greater than 16B.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|l|}
+	\hline
+	Parameter & Value(s) \\ \hline
+	$k$ & 1000 \\
+	n & 4\\
+	m & 4M, 16M, 32M, 64M, 128M, 256M\\
+	d & Uniform\\
+	t & 1, 2, 12, 24, 1024\\
+	$p_{min}$ & 200\\
+	$p_{max}$ & 400 \\
+	\hline
+	\end{tabular}
+	\caption{Test 3, Input parameters}
+	\label{tab:test3-params}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\testresult{execution-time}{Execution time}{img/test3/time} \qquad
+	\testresult{speedup}{Speedup}{img/test3/speedup} \\
+	\testresult{accuracy}{Execution time with variation}{img/test3/errorbar} \qquad
+	\testresult{work}{Work}{img/test3/work}
+	\caption{Test 3, horizontal scaling}
+	\label{fig:test3}
+\end{figure}
+
+\subsection{Partition size}
+\label{sec:partition-size}
+
+The partition size should be adjusted to minimize synchronization, and
+at the same time allow the algorithm to terminate as soon as possible.
+To achieve optimal performance, a trade-off has to be made. The
+algorithm can only terminate in the synchronization point where a new
+threshold value is calculated, therefore partition size must me
+sufficiently small to avoid unnecessary calculations. But, at the same
+time it has to be big enough to keep synchronization costs low. To
+achieve this, partition size is determined by the following heuristic:
+
+$p = k / t,  p_{min} \le p \le p_{max}$
+
+This test evaluates different values of p$_{min}$ and p$_{max}$
+separately. First, p${_min}$ is tested by starting at size of 1 and
+gradually increasing it to 1000 (see Table \ref{tab:test4-params}).
+Second, p${_max}$ is tested in the same manner, using input data
+described in Table \ref{tab:test5-params}. Finally both the results
+and the heuristic is discussed.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|l|}
+	\hline
+	Parameter & Value(s) \\ \hline
+	$k$ & 1000 \\
+	n & 4\\
+	m & 128M\\
+	d & Uniform\\
+	t & 1, 2, 12, 24, 1024\\
+	$p_{min}$ & 1, 5, 10, 50, 100, 200, 300, 400, 500, 1000\\
+	$p_{max}$ & 1000\\
+	\hline
+	\end{tabular}
+	\caption{Test 4, input parameters}
+	\label{tab:test4-params}
+\end{table}
+
+Figure \ref{fig:test4} shows that a small p$_min$ value impairs
+parallel performance, but have minimal negative effects on runs with a
+low thread count. This is an effect of the chosen heuristic, when t is
+small, $\frac{k}{t}$ will be larger than p$_min$, and the parameter will have no
+effect. Only when t is large enough, so that $\frac{k}{t}$ < p$_min$, p$_min$,
+it can increase partition size to reduce synchronization costs.
+Obviously p$_min$ of 1 does not result in any any performance gain.
+However, when p$_min$ reaches 400, there is a peak in performance.
+These results confirms assumptions stated earlier in this section. As
+partition size is increased, both run-time and records processed
+before returning a result is increased. Additionally, Figure
+\ref{fig:test4} shows that as partition size reaches 100, speedup
+increase at a significantly lower rate, this is attributed the
+work-synchronization trade-off. It is expected that speedup will
+decrease when a sufficiently high partition size is reached.
+
+\begin{figure}[H]
+	\centering
+	\testresult{execution-time}{Execution time}{img/test4/time} \qquad
+	\testresult{speedup}{Speedup}{img/test4/speedup} \\
+	\testresult{accuracy}{Execution time with variation}{img/test4/errorbar} \qquad
+	\testresult{work}{Work}{img/test4/work}
+	\caption{Test 4, minimum partition size}
+	\label{fig:test4}
+\end{figure}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|l|}
+	\hline
+	Parameter & Value(s) \\ \hline
+	$k$ & 1000 \\
+	n & 4\\
+	m & 128M\\
+	d & Uniform\\
+	t & 1, 2, 12, 24, 1024\\
+	$p_{min}$ & 1\\
+	$p_{max}$ & 1, 5, 10, 50, 100, 200, 300, 400, 500, 1000 \\
+	\hline
+	\end{tabular}
+	\caption{Test 4, input parameters}
+	\label{tab:test5-params}
+\end{table}
+
+In Figure \ref{fig:test5} the results of increasing p$_{max}$ is
+displayed. An interesting observation is that the run with 1024
+threads is very slow compared to runs with lower number of threads in
+all cases. This attributed the low p$_{min}$ value and should be
+disregarded in this context, p$_{max}$ has no effect when the number
+threads are to sufficiently high. 
+
+When p$_{max}$ reaches 400, there is a peak in speedup, similar to the
+results for p$_{min}$. It is assumed that a partition size of 400 is
+ideal for the input relation used. One can assume that for a different
+input relation, the ideal p$_{min}$ p$_{max}$ will be different. This
+is an indication of a poor heuristic function, only $k$ is taken into
+account, even though the input distribution and size are significant
+performance factors.  Instead of simply setting p$_{min}$ = p$_{max}$,
+a better heuristic is needed to achieve optimal performance for
+different input data.
+
+Looking at the work graph in \ref{fig:test5}, one can see a similar
+pattern for all of the HIPTA runs, a flat area where work is similar
+to the sequential algorithm, following a steep raise, ending in a flat
+area at peak value. This may seem somewhat peculiar at first, but it
+has a simple explanation, the heuristic function. For two threads, p =
+1000/2 = 500, this is exactly where the peak value is found. Before
+p${_max}$ = 500 is reached, partition size will be limited by
+p${_max}$, and work will be relatively low. In the transition from
+p${_max}$ = 400 to 500, the heuristic function will increase partition
+size to its peak value of 500 and stagnate. The same reasoning can be
+used for other thread counts.
+
+\begin{figure}[H]
+	\centering
+	\testresult{execution-time}{Execution time}{img/test5/time} \qquad
+	\testresult{speedup}{Speedup}{img/test5/speedup} \\
+	\testresult{accuracy}{Execution time with variation}{img/test5/errorbar} \qquad
+	\testresult{work}{Work}{img/test5/work}
+	\caption{Test 5, maximum partition size}
+	\label{fig:test5}
+\end{figure}
+
+\subsection{Thread count and input distribution}
+
+Based on earlier testing, parameters well suited for the parallel
+algorithm are chosen. This test is two-fold, first, it should provide
+a view over algorithms behavior as number of threads are increased.
+Second, it should examine the effect of positive- and negative
+correlation between attributes. It is expected that run-time will be
+reduced with positive correlation as a consequence of reaching the
+threshold value earlier (less records need to be processed to produce
+a result). For negative correlation, the opposite effect is expected.
+Reducing number of records processed will most likely reduce the
+potential for parallel computation, as synchronization and thread
+allocation overhead per record will be increased.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|l|}
+	\hline
+	Parameter & Value(s) \\ \hline
+	$k$ & 1000 \\
+	n & 8\\
+	m & 256M\\
+	d & Uniform, positive correlation\\
+	t & 1, 2, 4, 6, 8, 12, 16, 24, 32, 64, 128, 256, 512, 1024\\
+	$p_{min}$ & 200\\
+	$p_{max}$ & 400\\
+	\hline
+	\end{tabular}
+	\caption{Test 6, input parameters}
+	\label{tab:test2-params}
+\end{table}
+
+In this test, only speedup are included for positive and negative
+correlation. Work are in both cases very similar to work amount
+required to process uniform input. Positive correlation generally
+requires significantly less work, while negative correlation increase
+required work amount. However, form of the work graph is the same in
+all cases. Results are reported in Figure \ref{fig:test6}.
+
+Starting with the uniform distribution, one can see that increasing
+thread count from one to two give near perfect speedup of 2, further
+increase in thread count result in increasing speedup, but at a much
+slower rate. Four threads perform at about 75\% of perfect speedup,
+twelve threads perform at 33\%, and twenty four threads perform at
+20\%.  Further increase in thread count gives no performance gain.
+This decrease in relative speedup is attributed to the structure for
+storing results. Each time a record is processed it is inserted in a
+shared data structure, with a low potential for fine-grained locking.
+This limits the algorithms capability of utilizing parallelism.
+Speedup is limited by Amdahls law. Additionally, the limited number of
+physical cores will reduce speedup when tread count is increased to to
+a greater number than 12 as there no longer are additional compute
+power to utilize.  
+
+For the positively correlated input distribution, the graph is
+completely different. There are no speedup until 512 threads are used,
+where it jumps up to about 1.25, only 0.0025\% of linear speedup. It
+is no reason for the algorithm to perform any better for 512 threads
+than for 24 in this case, and the increase is assumed to be the result
+of some random event (noise). Positive correlation lead to termination
+in less than one second, and results showed a relatively big
+variation. For such a quick termination the sequential algorithm seems
+to perform better than HIPTA. For cases like this it would be helpful
+to have some heuristic that can be used to decide if TA or HIPTA
+should be used to answer the query.
+
+\begin{figure}[H]
+	\centering
+	\testresult{speedup}{Speedup, uniform}{img/test6/speedup} \qquad
+	\testresult{speedup}{Speedup, positive correlation}{img/test6/speedup_skew} \\
+	\testresult{speedup}{Speedup, negative correlation}{img/test6/speedup_acorr} \qquad
+	\testresult{work}{Work, uniform}{img/test6/work}
+	\caption{Test 6, thread count and input distribution}
+	\label{fig:test6}
+\end{figure}
+
+Negative correlation was expected to increase work amount required,
+and thereby increasing the potential for parallel speedup. However,
+test results differ. A potential reason for this is the fact that n
+was no greater than 2, lower than for the other tests. The low n value
+was chosen to simplify the process of generating a negatively
+correlated data set. Comparing this result to findings in Section
+\ref{sec:test1}, one can see that limiting n has a severe effect on
+HIPTA. Similar to other benchmarks, the data structure used to store
+results is a potential source of performance degradation, it is
+possible that the optimization described Section
+\ref{sec:methods-and-tools} is ineffective for this data set. If that
+is the case, the algorithm will have an increased sequential part, and
+parallel speedup will be limited. There is a slight speedup for four
+threads, but mostly, the graph shows negative speedup, HIPTA seems to
+be less efficient than TA for this distribution. The assumption of
+increased work required to produce results were correct, about twice
+as many records need to be processed before the algorithm can
+terminate. However, HIPTA were not able to utilize the increased
+potential for parallel computation, rather, it showed a performance
+degradation.
+
+\subsection{Implications}
+
+These results imply that it is possible to improve performance with
+minimal changes, even for algorithms requiring a decent amount of
+synchronization, like the threshold algorithm. However, algorithms
+most be carefully examined to be able to exploit shared-memory systems
+in an efficient manner. Speedup achieved in this report was not
+optimal, even with a low number of threads, and the algorithm was
+sensitive to skewed data sets. By examining shared memory algorithms
+for different input sets, one may be able to construct useful
+heuristics. These heuristics could be used by the query optimizer
+to decide whether the parallel algorithm is likely to be more
+efficient than the sequential equivalent. For instance, the
+sequential algorithm is superior when processing small data sets
+and data where attributes shows a high degree of positive correlation.
+In contrast, for a big data set with uniform distribution, HIPTA
+achieves close to linear speedup using two threads and a speedup of 3
+using four threads.
+
+Another implication is that methods from traditional parallel database
+systems could prove useful, also for shared-memory programming. HIPTA
+was able to use horizontal partitioning in a round robin fashion.
+Although round robin placement is considered a bad partitioning
+technique in parallel databases, because of the insertion operator, it
+can be efficient in shared-memory algorithms, where the insertion
+operator not necessarily is an issue. In HIPTA, data is not explicitly
+partitioned, however, tasks are distributed among threads to achieve
+the same result. An advantage of this method is that data does not
+have to be moved or copied, instead each thread are working on a
+different part of a big array. If this array are kept unchanged
+(read-only), there will be no synchronization costs while fetching
+rows, and good performance can be achieved. However, care must be
+taken to avoid false sharing, it may be necessary with padding between
+partitions.
+
+The data structure for storing results is a bottleneck, due to the
+coarsely grained locking requirements. It is likely that a structure
+allowing more fine-grained locking will be more efficient. This points
+to the importance of efficient concurrent data structures. In many
+cases, a hash map would be considered as a good alternative. However,
+for threshold algorithm, sorted output is required, therefore a
+concurrent binary tree, or a skip list may be more efficient

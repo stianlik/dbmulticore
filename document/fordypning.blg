@@ -1,0 +1,47 @@
+This is BibTeX, Version 0.99d (TeX Live 2012/Arch Linux)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: fordypning.aux
+A level-1 auxiliary file: tex/title.aux
+The style file: abbrv.bst
+Database file #1: references.bib
+You've used 20 entries,
+            2118 wiz_defined-function locations,
+            595 strings with 6735 characters,
+and the built_in function-call counts, 5330 in all, are:
+= -- 468
+> -- 268
+< -- 1
++ -- 111
+- -- 88
+* -- 296
+:= -- 891
+add.period$ -- 55
+call.type$ -- 20
+change.case$ -- 104
+chr.to.int$ -- 0
+cite$ -- 20
+duplicate$ -- 245
+empty$ -- 486
+format.name$ -- 88
+if$ -- 1134
+int.to.chr$ -- 0
+int.to.str$ -- 20
+missing$ -- 18
+newline$ -- 98
+num.names$ -- 32
+pop$ -- 160
+preamble$ -- 1
+purify$ -- 88
+quote$ -- 0
+skip$ -- 145
+stack$ -- 0
+substring$ -- 130
+swap$ -- 38
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 74
+warning$ -- 0
+while$ -- 34
+width$ -- 22
+write$ -- 194

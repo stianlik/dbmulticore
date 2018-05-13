@@ -1,0 +1,7 @@
+~*
+*.swp
+*.aux
+*.bbl
+/tools/download
+/tools/vtune*
+/data

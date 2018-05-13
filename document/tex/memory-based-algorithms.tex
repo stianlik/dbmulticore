@@ -1,0 +1,221 @@
+In this chapter algorithms optimized for memory-based architectures is
+considered. Efficient memory access, use of cache, and synchronization
+are dominating factors of performance in this architecture. For
+memory-intensive algorithms like sorting, bus bandwidth is also an
+important consideration.
+
+\section{Join}
+
+This section presents two algorithms recently published in
+\cite{hashjoin} and \cite{sortmergejoin}, respectively. The first
+algorithm is similar to traditional hash join algorithm introduced in
+Chapter \ref{chap:disk-based-algorithms}, while the second algorithm
+use sort and merge operations to produce the result.
+
+\label{sec:join-algorithms}
+
+\subsection{Hash join}
+\label{hashjoin}
+
+Efficient hash join algorithms for multi-core processor were evaluated
+by Blanas et al.\ in \cite{hashjoin}. Authors discovered that a simple
+hash join algorithm is very competitive to the other more complex
+methods evaluated. Algorithms explored in \cite{hashjoin} are very
+similar to the traditional traditional hash join algorithms introduced
+in Chapter \ref{chap:disk-based-algorithms}. They have three steps:
+
+\begin{enumerate}
+	\item Partition (optional if smallest relation fits in main memory)
+	\item Build
+	\item Probe
+\end{enumerate}
+
+Partitioning is used to avoid cache-misses, relations are split so
+that that each partition fits in the CPU cache, equivalent to
+partitioning used in traditional parallel databases. The build phase
+writes the smallest relation into a hash table. Subsequently, the
+probe phase use the same hash function on the larger relation to limit
+the search. When a match is found, keys are compared directly to
+verify that the records are equal, and did not just produce the same
+hash value. Algorithm \ref{alg:hashjoin} shows a possible
+implementation of simple hashjoin. Loops commented with "in parallel"
+indicates that the data is evenly distributed among available threads
+and run in parallel.
+
+In the process of evaluationg the algorithms, authors found that
+modern processors are very effective in hiding cache latencies through
+multi-threading. They concluded that the costs of partitioning can be
+higher than the benefit of less cache-misses.
+
+\begin{algorithm}[H]
+	\caption{HashJoin}
+	\label{alg:hashjoin}
+	\begin{algorithmic}
+		\REQUIRE A $\leftarrow$ left input relation, B $\leftarrow$
+		right input relation, R $\leftarrow$ result
+		\ENSURE R $\leftarrow$ A $\bowtie$ B
+
+		% Build
+		\STATE T $\leftarrow$ empty hashtable
+		\FORALL[in parallel]{$a \in A$}
+			\STATE $k \leftarrow hash(a)$
+			\STATE{lock bucket k}
+			\STATE T.put(k,a)
+			\STATE{unlock bucket k}
+		\ENDFOR
+
+		\STATE sync
+
+		% Probe
+		\FORALL[in parallel]{$b \in B$}
+			\STATE $k \leftarrow hash(b)$
+			\IF{$k \in T.keys()$}
+				\FORALL{$a \in T.get(k)$}
+					\IF{b.key = a.key}
+						\STATE lock R
+						\STATE R.add(merge(a,b));
+						\STATE unlock R
+					\ENDIF
+				\ENDFOR
+			\ENDIF
+		\ENDFOR
+
+	\end{algorithmic}
+\end{algorithm}
+
+\subsection{Sort-merge join}
+\label{sortmergejoin}
+
+In \cite{sortmergejoin}, Albutiu et al.\ develop a sort-based parallel
+join method that scales (almost) linearly with the number of cores.
+They focus on the NUMA architecture, basing their design on the
+NUMA-rules presented in Section \ref{sec:optimization}. Input data is
+chunked into equally sized chunks among the workers, each worker get
+one chunk from relation R and one from S. After the data is
+distributed, the basic algorithm is presented in Algorithm
+\ref{alg:bmpsm} and consists of three phases:
+
+\begin{enumerate}
+	\item Sort $S_i$
+	\item Sort $R_i$
+	\item Merge $R_i$ S
+\end{enumerate}
+
+The algorithm does not merge chunks to form a globally sorted output,
+instead the sorted runs are joined in parallel. Authors argue that
+sorted output is not a requirement for the join operator, and avoiding
+the global merge reduce synchronization overheads. In phase 3 each
+worker merge its chunk with the entire S relation (that is, $R_i$ is
+compared with each $S_i$, exploiting the local sorting). Phase 3 can
+begin before phase 2 is completed, allowing the algorithm to use
+pipelined parallelization. This means that the algorithm does more
+work than a traditional sort-merge, but improves performance
+drastically by executing operations in parallel.
+
+\begin{algorithm}[H]
+	\caption{B-MPSM}
+	\label{alg:bmpsm}
+	\begin{algorithmic}
+		\REQUIRE A $\leftarrow$ left input relation, B $\leftarrow$ right
+		input relation, R $\leftarrow$ result
+		\ENSURE R $\leftarrow$ A $\bowtie$ B
+		\STATE distribute input data into equally sized chunks among workers
+		\STATE BEGIN WORKER 
+		\COMMENT{parallel section}
+		\STATE Sort $B_i$
+		\STATE sync
+		\STATE Sort $A_i$
+		\FORALL{$B_i \in B$}
+			\STATE $R_i \leftarrow A_i \bowtie B_i$
+		\ENDFOR
+		\STATE END WORKER
+		\COMMENT{barrier}
+		\STATE R $\leftarrow R_1 \cup \ldots \cup R_n$
+	\end{algorithmic}
+\end{algorithm}
+
+\section{Top-$k$}
+
+In this section, techniques for parallizing the threshold algorithm,
+introduced in Chapter \ref{chap:disk-based-algorithms} are suggested,
+and a parallel algorithm is developed using horizontal input
+partitioning.
+
+\section{Parallel top-$k$ select}
+\label{sec:parallel-top-k}
+
+It is possible to run parts of TA in parallel to utilize multi-core
+architectures better. This can achieve a certain degree of
+parallelism, but TA requires frequent synchronizatoin, therefore only
+a limited speedup is expected. However, TA may take some benefit of
+parallel execution, and can be used to test if algorithms that are
+relatively synchronization havy can benefit from the parallel compute
+power exhibited in multi-core architectures. This section will
+gradually increase the degree of parallelism, while attempting to keep
+synchronization costs low.
+
+\subsection{Vertical input partitioning}
+
+If the scoring function $f(\ldots)$ is in the form $ax + by + cy +
+\ldots$, terms can be calculated in parallel. With expensive terms
+this may have a positive impact on performance. Using as many threads
+as attributes, costs are reduced by a factor of $n$, where $n$ is the
+number of attributes. This can be accomplished using one master thread
+to execute the algorithm and a pool of worker threads calculating the
+terms on demand each time $f(\ldots)$ is called.
+
+A shortcoming of this approach is that the number of threads are
+limited by number of attributes. Only the vertical potential for
+parallelism is exploited. In addition, worker threads can end up
+periodically waiting for the master thread. A better solution is to
+exploit the data parallelism in such a function and use SIMD
+operations. A typical processor allows up to four terms to be
+calculated simultaneously without any extra overhead if SIMD
+primitives are used. A great advantage of SIMD is that they can be
+utilized with minimal overhead, there is no need to create threads to
+exploit data parallelism.
+
+\subsection{Horizontal input partitioning}
+
+Another way parallelize TA is to calculate one row per thread in a
+round robin fashion. This allows for a greater degree of parallelism,
+but requires some synchronization, see algorithm
+\ref{alg:ta-parallel-basic}. Note that, records can be partitioned in
+bigger parts than one row per thread to decrease synchronization
+costs.
+
+\subsubsection{Algorithm description}
+
+The function processRow contains lines 3-9 from the sequential
+algorithm, in addition to some synchronization logic. When values are
+written to R, a write lock is required. Checking if a key has been
+processed and adding it to the set of processed keys is an atomic
+operation. This may result in threads waiting to access collections.
+To reduce synchronization costs, processRow should process multiple
+records in each call.
+
+\begin{algorithm}[H]
+	\caption{HIPTA}
+	\label{alg:ta-parallel-basic}
+	\begin{algorithmic}
+		\REQUIRE
+			L $\leftarrow$ collection\ of\ sorted\ lists,
+			f $\leftarrow$ scoring\ function,
+			$k$ $\leftarrow$ requested\ number\ of\ tuples
+		\ENSURE R $\leftarrow$ sorted\ set\ of\ $k$\ tuples\ with\ highets\ score
+
+		\STATE S $\leftarrow \{\}$
+		\COMMENT{all keys seen so far}
+		\WHILE {relation\ has\ more\ rows}
+			\FOR {i $\leftarrow$ 0\ to\ threadcount}
+				\STATE spawn\ processRow(L, f, S, R)
+			\ENDFOR
+			\STATE sync
+			\STATE t $\leftarrow f(\overline{p_0}, \ldots, \overline{p_n})$
+			\IF {$\Big|\{r \in R | r.score \ge t\}\Big| \ge k$}
+				\RETURN R
+			\ENDIF
+		\ENDWHILE
+		\RETURN R
+	\end{algorithmic}
+\end{algorithm}

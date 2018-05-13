@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "./plot INFILE OUTFILE"
+gnuplot -e "inputfile=\"$1\"; outputfile=\"$2\"" plot.gpi

@@ -1,0 +1,42 @@
+# Config
+
+#inputfile = "hashjoin1.dat"
+#outputfile = "plot.pdf"
+
+#set terminal eps
+#set output "plot.eps"
+set terminal pdf
+set output outputfile
+set xlabel "Number of output tuples"
+set ylabel "Ellapsed time in seconds"
+set boxwidth 3500000
+set style fill solid 1.0 border rgb 'grey30'
+set xtics(\
+	"4.7k" 800000,\
+	"8M" 8000000,\
+	"40M" 40000000,\
+	"80M" 80000000\
+)
+#set grid
+mylabel(n) = \
+(n==800000) ? "24MB + 114MB" : \
+(n==8000000) ? "233MB + 1.2GB" : \
+(n==40000000) ? "1.2GB + 5.7GB" :\
+(n==80000000) ? "2.3GB + 12GB" : ""
+
+unset key
+set label "JOIN(233MB,1.2GB)" at first 2e6, 5
+set label "JOIN(1.2GB,5.7GB)" at first 30e6, 16
+set label "JOIN(2.3GB,12GB)" at first 62e6,28 
+plot inputfile using 3:6 lt rgbcolor "#ddffdd" title 'Seconds' with boxes
+replot inputfile using 3:6 lt 1 title 'Seconds' with points 
+#replot inputfile using 3:6:(mylabel($3)) \
+#	lt 12 title 'Seconds' with labels
+
+set ylabel "CPU cycles/tuple (assuming 2.67G cycles/sec)"
+set grid
+plot inputfile using 3:($6*2.67e9/$3) lt 12 title '' with boxes 
+replot inputfile using 3:($6*2.67e9/$3) lt 1 title '' with points 
+unset multiplot
+
+#replot inputfile using 3:6 lt 12 title 'Seconds' with lines

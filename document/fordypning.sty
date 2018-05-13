@@ -1,0 +1,73 @@
+\ProvidesPackage{fordypning}
+
+%\usepackage[cm]{fullpage}
+\usepackage[hmargin=3cm,vmargin=3cm]{geometry}
+\usepackage{setspace}
+
+% binding margins
+%\usepackage{geometry}
+%\geometry{textwidth=15cm}
+%\geometry{bindingoffset=2cm}
+
+%\usepackage[twoside,left=4cm, right=2cm, vmargin=3cm]{geometry}
+\usepackage{emptypage}
+
+\usepackage{scrpage2}
+\ifoot[]{}
+\cfoot[]{}
+\ofoot[\pagemark]{\pagemark}
+
+\pagestyle{scrplain}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref} 
+\usepackage{url} 
+\usepackage[utf8]{inputenc}
+%\usepackage{lscape}
+\usepackage{pdflscape}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{parskip} % No identation for paragraphs
+\usepackage[noend]{algorithmic}
+\usepackage{algorithm}
+\usepackage{amsthm}
+\usepackage{thmtools}
+\usepackage{comment}
+\usepackage[lofdepth,lotdepth]{subfig}
+\usepackage[usenames,dvipsnames]{xcolor}
+\setcounter{tocdepth}{1}
+
+\lstset{
+float,
+language=SQL, 
+%caption={Selection and projection example}, 
+%backgroundcolor=\color{Gray},
+tabsize=4,
+frame=tb,
+basicstyle=\ttfamily,
+keywordstyle=\uppercase,
+captionpos=b,
+aboveskip=2em,
+belowskip=1em,
+escapeinside={/*}{*/}
+}
+
+%\newtheoremstyle{example}
+%	{\parskip}	% space above
+%	{}			% space below
+%	{\itshape}	% Font in body
+%	{}			% Indent
+%	{\scshape}	% Font in head
+%	{.}			% Punctuation between head and body
+%	{.5em}		% Space after theorem head
+%	{}			% Manually specify head
+\declaretheoremstyle[spaceabove=\parskip]{example}
+\declaretheorem[style=example]{example}
+\newtheorem{definition}{Definition}
+
+\newcommand{\testresult}[3]{
+	\subfloat[#1][#2]{
+		\centering
+		% left bottom right top
+		% 0.36
+		\includegraphics[scale=0.34,trim=0.8cm 6.5cm 1cm 6.8cm]{#3} } 
+}

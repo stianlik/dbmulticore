@@ -1,0 +1,34 @@
+\begin{abstract} 
+The focus in this report is investigating efficient database
+algorithms for modern multi-core processors in main memory
+environments. It starts by introducing methods and algorithms used in
+traditional database managements systems, one of the algorithms
+described is the relatively new threshold algorithm for top-$k$ select
+queries. Further, the multi-core landscape is explored in terms of
+typical memory structures, cache hierarchies, frameworks, and common
+optimization techniques. A selected set of memory based algorithms are
+described, and the threshold algorithm is parallelized using
+partitioning techniques similar to the ones used in traditional
+parallel databases.
+
+The parallel threshold algorithm is implemented and evaluated using a
+set custom benchmarks to determine the effects of changing input size
+and distribution, partition size, number of rows requested, and number
+of threads used. Tests reveal that the algorithm achieve linear
+speedup for a big uniform data set using two threads. However, the
+relative speedup shows a gradual decrease as the number of threads are
+increased, resulting in a speedup of only four when twelve threads are
+in use. This decrease in relative speedup is not unexpected, it is
+attributed the algorithms need for frequent synchronization, and a data
+structure using coarse grained locking. 
+
+Based on these results, it is evident that multi-core processors have
+potential for increasing performance even in algorithms that require a
+decent amount of synchronization. It is suggested that database
+management systems should use heuristics to determine whether
+multi-core algorithms will provide improved performance compared to
+sequential versions in the process of query optimization. Continued
+research in this area is likely to provide useful results, it is
+essential that future database management systems utilize the
+increased compute power provided by multi-core processors.
+\end{abstract}

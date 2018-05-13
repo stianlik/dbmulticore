@@ -1,0 +1,262 @@
+\section{Parallel top-k select}
+\label{sec:parallel-top-k}
+
+To utilize multiple cores for top-k, it is possible to run parts of TA
+in parallel. This can achieve a certain degree of parallelism, but TA
+is a synchronization heavy algorithm. This section will gradually
+increase the degree of parallelism, while attempting to keep
+synchronization costs low.
+
+\subsection{Vertical input partitioning}
+
+If the scoring function $f(\ldots)$ is in the form $ax + by + cy +
+\ldots$, terms can be calculated in parallel. With expensive terms
+this may have a impact on performance. Using as many threads as
+attributes, costs are reduced by a factor of $n$, where $n$ is the
+number of attributes. This can be accomplished using one master thread
+to execute the algorithm and a pool of worker threads calculating the
+terms on demand each time $f(\ldots)$ is called.
+
+A shortcoming of this approach is that number of threads are limited
+by number of attributes. Only the vertical potential for Parallelism
+is exploited. In addition, worker threads can end up periodically
+waiting for the master thread. This technique can be used in
+combination with any of the following algorithms.
+
+\subsection{Horizontal input partitioning}
+
+Another way parallelize TA is to calculate one row per thread in a
+round robin fashion. This allows for a greater degree of parallelism,
+but requires some synchronization, see algorithm
+\ref{alg:ta-parallel-basic}. 
+
+\subsubsection{Algorithm description}
+
+The function processRow contains lines 3-9 from the sequential
+algorithm, in addition to some synchronization logic. When values are
+written to R, a write lock is required. Checking if a key has been
+processed and adding it to the set of processed keys is an atomic
+operation. This may result in threads waiting to access collections.
+
+\begin{algorithm}[H]
+	\caption{HIP-TA}
+	\label{alg:ta-parallel-basic}
+	\begin{algorithmic}[1]
+		\REQUIRE $
+			L \leftarrow Collection\ of\ sorted\ lists,
+			f \leftarrow Scoring\ function,
+			k \leftarrow Requested\ number\ of\ tuples$
+		\ENSURE $R = Sorted\ set\ of\ k\ tuples\ with\ highets\ score$
+
+		\STATE $S \leftarrow \{\}$
+		\COMMENT{All keys seen so far}
+		\WHILE {$relation\ has\ more\ rows$}
+			\FOR {i = 0\ to\ threadcount}
+				\STATE $spawn\ processRow(L, f, S, R)$
+			\ENDFOR
+			\STATE $sync$
+			\STATE $t \leftarrow f(\overline{p_0}, \ldots, \overline{p_n})$
+			\IF {$\Big|\{r \in R | r.score \ge t\}\Big| \ge k$}
+				\RETURN R
+			\ENDIF
+		\ENDWHILE
+		\RETURN R
+	\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Complexity analysis}
+
+This is essentially the same algorithm as sequential TA. It use $processRow$
+to do some of the operations in parallel so that number of iterations
+in the outer loop (starting at line 2) is reduced by a factor $t$
+(threadcount). In the ideal case, synchronization costs are trivial
+and we get the following run-time:
+
+$T(n,m,k,t) = O(\frac{mn^2}{t} + \frac{mnk}{t})$
+
+The second term $\frac{mnk}{t}$ is optimistic if the data structure
+and/or method of adding results remains equal to the sequential
+version. When adding results, the entire list must be locked, forcing
+this operation has to be run sequentially. This leads to a runtime of:
+
+$T(n,m,k,t) = O(\frac{mn^2}{t} + mnk)$
+
+In addition there are synchronization costs in each iteration, locks
+need to be kept in memory, and checked before list is accessed. One
+alternative is to use separate data structures for each thread, but
+these need to be merged to generate the final result. Using a blocked
+data structure may be a better option, allowing threads to lock
+smaller parts of the result set in some cases. Blocking the result set
+this way allows the algorithm to add some tuples in parallel.
+
+\begin{comment}
+
+\subsection{Horizontal input- and output partitioning}
+
+TODO Rotete beskrivelse. Endre til spawn/sync-syntaks. Tenk på bedre
+algoritme, tror ikke denne er helt ideell.
+
+One way to reduce the need for synchronization is to delay adding
+results to the final result set, and give each thread it's private
+collection for seen objects. This way each thread can calculate a
+predetermined number of rows before any synchronization is needed.
+Some scores may be calculated multiple times since the algorithm does
+not use a central set of seen elements. The impact of this depends
+heavily on the input distribution, and on the cost of score
+calculation. After all threads have calculated a predetermined number
+of scores, a threshold value need to be calculated and results must be
+combined. The algorithm choose the smallest threshold value from each
+of the locally calculated results. Next, each partition is merged into
+R (values below threshold is thrown away). The merge operation can be
+expensive. See algorithm \ref{alg:splitmerge}.
+
+\begin{description}
+	\item[PF] Parallel framework
+\end{description}
+
+%\begin{algorithm}[H]
+	%\caption{Naive parallel TA}
+	%\label{alg:parallel-ta-1}
+	%\begin{algorithmic}
+		%\REQUIRE $
+			%L \leftarrow Collection\ of\ sorted\ lists,
+			%f \leftarrow Scoring\ function,
+			%k \leftarrow Requested\ number\ of\ tuples$
+		%\ENSURE $R = Sorted\ set\ of\ k\ tuples\ with\ highets\ score$
+%
+		%\STATE $n \leftarrow Number\ of\ scoring\ attributes$
+		%\STATE $m \leftarrow Number\ of\ rows\ in\ relation$
+		%\STATE $P = Values\ for\ last\ seen\ row, initially\ empty$
+		%\COMMENT {one set per thread}
+		%\STATE $F = All\ keys\ seen\ so\ far, initially\ empty$ 
+%
+		%\FOR[in parallel]{$i \leftarrow 0\ to\ m$}
+			%\FORALL {$L_i \in L$}
+				%\STATE unseen = $\neg F.findpush(L_i.key)$
+				%\COMMENT{atomic}
+				%\IF {unseen}
+					%\STATE $score \leftarrow f(L_0.value, \ldots, L_n.value)$
+					%\STATE $R.push\_if\_not\_worst(key,score)$
+					%\COMMENT{atomic}
+				%\ENDIF
+				%\STATE $P[thread\_id]_i = L_i.value$
+			%\ENDFOR
+			%\STATE $T[thread\_id] = f(P_0, \ldots, P_n)$
+			%\IF[atomic]{$T[thread\_id] < t$}
+				%\STATE $t = T[thread\_id]$
+			%\ENDIF
+			%\STATE $barrier()$
+			%\IF {$|\{r \in R | r.score \ge t\}| \ge k$}
+				%\RETURN R
+			%\ENDIF
+		%\ENDFOR
+		%\RETURN R
+	%\end{algorithmic}
+%\end{algorithm}
+
+\begin{algorithm}[H]
+	\label{alg:splitmerge}
+	\caption{HIOP-TA}
+	\begin{algorithmic}[1]
+		\REQUIRE $
+			L \leftarrow Collection\ of\ sorted\ lists,
+			f \leftarrow Scoring\ function,
+			k \leftarrow Requested\ number\ of\ tuples$
+		\ENSURE $R \leftarrow Sorted\ set\ of\ k\ tuples\ with\ highets\ score$
+
+		\STATE $t \leftarrow \infty$
+		\COMMENT{threshold}
+		\STATE $partsize \leftarrow 1$
+		\COMMENT{each thread calculates one row per round}
+		\STATE $startrow \leftarrow 0$
+
+		\WHILE{$relation\ has\ more\ rows$}
+			\STATE PF.begin(PARALLEL,thread\_count)
+			\STATE $F_{threadid} = \{\}$
+			\STATE $j \leftarrow startrow + thread\_id * partsize$ 
+			\FOR{$i \leftarrow j\ to\ j + partsize$}
+				\FORALL{$L_i \in L$}
+					\IF{$key \notin F_{thread\_id}$}
+						\STATE $score \leftarrow f(p_0,\ldots,p_n)$
+						\STATE $F_{thread\_id} \leftarrow F_{thread\_id} 
+						\cup \{(key, score)\}$
+					\ENDIF
+				\ENDFOR
+			\ENDFOR
+			\STATE $T_{thread\_id} \leftarrow f(\overline{p_0},\ldots,\overline{p_n})$
+			\STATE PF.barrier()
+			\STATE PF.begin(ATOMIC)
+			\IF{$T_{thread\_id} < t$}
+				\STATE $t \leftarrow T_{thread\_id}$
+			\ENDIF
+			\STATE PF.end(ATOMIC)
+			\STATE $remove\ tuples\ scored \leq t\ from\ each\ list\ F_{threadid}$
+			\STATE PF.end(PARALLEL)
+			\STATE $ParallelMerge(F,R)$
+			\IF {$|R| \ge k$}
+				\RETURN R
+			\ELSE
+				\STATE $startrow \leftarrow startrow + thread\_count * partsize$
+			\ENDIF
+		\ENDWHILE
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+	\label{alg:merge}
+	\caption{ParallelMerge}
+	\begin{algorithmic}
+		\REQUIRE $
+			L \leftarrow Collection\ of\ sorted\ lists,
+			R \leftarrow Result\ array$
+		\ENSURE $R \leftarrow L\ merged\ into\ one\ sorted\ list$
+	
+		\WHILE{$L.length \neq 1$}
+			\STATE PF.begin(PARALLEL, $\lfloor \frac{L.length}{2} \rfloor$)
+			\FOR{$i = 0\ to\ L.length\ increasing\ with\ 2\ each\ iteration$}
+				\STATE $sequential\_merge((L_i, L_{i+1}), Tmp_{i/2})$
+			\ENDFOR
+			\STATE PF.end(PARALLEL)
+			\STATE $L = Tmp$
+		\ENDWHILE
+
+		\STATE $R = L_1$
+
+	\end{algorithmic}
+\end{algorithm}
+
+\subsection{Complexity analysis}
+
+% n: number of scoring attributes
+% m: number of tuples processed
+% k: requested number of tuples
+% p: partition size
+% t: thread count
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|l|p{10cm}|}
+		\hline
+		Lines & Cost & Comment \\ \hline
+		1-3	& $O(1)$ & \\
+		4-5 & $O(\frac{m}{p})$ & \\
+		6-7, 16-22, 24& $O(\frac{m}{pt})$ & \\
+		8 & $O(\frac{m}{t})$ & \\
+		9-10 & $O(\frac{mn}{t})$ & \\
+		11 & $O(\frac{mn^2}{t})$ & \\
+		12 & $O(\frac{lg(p)m}{t} + \frac{mp}{2t})$ & Binary search + moving values to keep list sorted \\
+		23 & $O(\frac{m}{pt}*\lg(p))$ & Binary search. More expensive if
+		many elements must be moved. Linked list and sequential search 
+		may be beneficial \\
+		25 & $O(2mt)$ & Depends om merge method, assuming 
+		ParallelMerge is used and $t \rightarrow \infty$ merge will
+		use $O(2tp)$, for lower values of $t$ it will be faster. \\
+		26-30 & $O(\frac{m}{pt})$ \\
+		\hline
+	\end{tabular}
+	\caption{HIOP-TA complexity analysis (run-time)}
+\end{table}
+
+$T(m,n,t,p)) = O(mt + \frac{mn^2}{t} + \frac{mp}{t} + \frac{m}{p} )$
+
+\end{comment}

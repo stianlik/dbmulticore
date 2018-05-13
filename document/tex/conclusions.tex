@@ -1,0 +1,59 @@
+Recently multi-core processors have become wide-spread, and it is
+likely that this this architecture will continue to thrive in the
+future. Even laptops are equipped with processors including four cores
+or more. This have led to an increasing interest in shared memory
+programming and parallel algorithms. It is obvious that efficient
+algorithms and data structures running on shared memory systems with
+multi-core processors are needed to utilize the increased compute
+power.
+
+In this report, data operations in general were described, including
+terminology, common methods and algorithms. Additionally, the
+multi-core architecture was introduced and a set of frameworks for
+shared memory programming were described. Algorithms for shared memory
+systems were explored, including hash join and sort-merge join.
+Furthermore, an algorithm for top-$k$ select was developed by
+parallelizing the threshold algorithm, first introduced by Nepal et
+al.\ in \cite{ramakrishna}.
+
+HIPTA, the parallel threshold algorithm was implemented and evaluated
+using several custom benchmarks. Testing showed that the algorithm was
+able to utilize the additional parallel compute power to a certain
+degree, using a simple horizontal partitioning technique. The
+algorithm achieved near to linear speedup for a big uniform data set,
+with two threads. Further increases in thread count did also increase
+speedup, but to a lesser degree. This was attributed additional
+synchronization costs, and the fact that a large part of the algorithm
+were inherently sequential due to a shared data structure. Results
+were placed in a sorted array, where inserts could require moving
+elements. The problem with this structure was that it needed a coarse
+locking technique, locking the entire array before it could be
+searched or updated. It was suggested to improve the algorithm by
+replacing this data structure with a structure that could handle more
+fine-grained locking. It was also suggested that database management
+systems should utilize heuristics to determine whether parallel shared
+memory algorithms were likely to outperform sequential versions.
+
+In future work, it would be interesting to test different data
+structures for the HIPTA algorithm. There are already implementations
+of concurrent binary trees, skip lists, and other concurrent data
+structures that should be considered in future versions. It is likely
+that fine-grained locking will improve performance by increasing the
+parallel potential of the algorithm. A different technique that could
+be used is to allow each thread to process its partition
+independently, and only synchronize at the point where a new threshold
+value is calculated. This would allow greater parts of the algorithm
+to be executed in parallel, but it would also incur an additional
+merge overhead.
+
+Reported results suggests that multi-core processors can be utilized
+to improve performance for database operations, even for algorithms
+requiring a decent amount of synchronization. However, for certain
+algorithms it may be possible to develop better algorithms using more
+creative techniques. This points to a need for further research on
+database algorithms and structures in the context of multi-core
+processors. Thus far, many of the shared memory algorithms are
+essentially parallel versions of traditional algorithms. It is
+expected that core count will continue to increase, and database
+management systems must be able to efficiently utilize the additional
+compute power to keep up with development in other areas.

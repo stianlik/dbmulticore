@@ -1,0 +1,30 @@
+\BOOKMARK [0][-]{chapter.1}{Introduction}{}% 1
+\BOOKMARK [0][-]{chapter.2}{Database operations}{}% 2
+\BOOKMARK [1][-]{section.2.1}{Selection and projection}{chapter.2}% 3
+\BOOKMARK [1][-]{section.2.2}{Join}{chapter.2}% 4
+\BOOKMARK [1][-]{section.2.3}{Top-k}{chapter.2}% 5
+\BOOKMARK [0][-]{chapter.3}{Disk-based algorithms}{}% 6
+\BOOKMARK [1][-]{section.3.1}{Nested loop}{chapter.3}% 7
+\BOOKMARK [1][-]{section.3.2}{Sorting}{chapter.3}% 8
+\BOOKMARK [1][-]{section.3.3}{Partitioning}{chapter.3}% 9
+\BOOKMARK [1][-]{section.3.4}{Selection and projection}{chapter.3}% 10
+\BOOKMARK [1][-]{section.3.5}{Join}{chapter.3}% 11
+\BOOKMARK [1][-]{section.3.6}{Top-k}{chapter.3}% 12
+\BOOKMARK [1][-]{section.3.7}{Parallel database management systems}{chapter.3}% 13
+\BOOKMARK [0][-]{chapter.4}{Multi-core processors}{}% 14
+\BOOKMARK [1][-]{section.4.1}{Uniform memory access}{chapter.4}% 15
+\BOOKMARK [1][-]{section.4.2}{Non-uniform memory access}{chapter.4}% 16
+\BOOKMARK [1][-]{section.4.3}{Cache hierarchy}{chapter.4}% 17
+\BOOKMARK [1][-]{section.4.4}{Multithreading}{chapter.4}% 18
+\BOOKMARK [1][-]{section.4.5}{Threads and processes}{chapter.4}% 19
+\BOOKMARK [1][-]{section.4.6}{Programming frameworks}{chapter.4}% 20
+\BOOKMARK [1][-]{section.4.7}{Code optimization}{chapter.4}% 21
+\BOOKMARK [0][-]{chapter.5}{Memory-based algorithms}{}% 22
+\BOOKMARK [1][-]{section.5.1}{Join}{chapter.5}% 23
+\BOOKMARK [1][-]{section.5.2}{Top-k}{chapter.5}% 24
+\BOOKMARK [1][-]{section.5.3}{Parallel top-k select}{chapter.5}% 25
+\BOOKMARK [0][-]{chapter.6}{Implementation and evaluation}{}% 26
+\BOOKMARK [1][-]{section.6.1}{Methods and tools}{chapter.6}% 27
+\BOOKMARK [1][-]{section.6.2}{Implementation}{chapter.6}% 28
+\BOOKMARK [1][-]{section.6.3}{Experimental evaluation}{chapter.6}% 29
+\BOOKMARK [0][-]{chapter.7}{Conclusions and future work}{}% 30

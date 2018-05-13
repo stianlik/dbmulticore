@@ -1,0 +1,84 @@
+# Reading tables
+# Performing tests for hashjoin_omp
+# Thread count	Time	
+1	289	
+2	375	
+4	297	
+6	245	
+8	246	
+12	201	
+24	183	
+# Thread count	Time	
+1	408	
+2	424	
+4	313	
+6	266	
+8	257	
+12	213	
+24	192	
+# Thread count	Time	
+1	402	
+2	428	
+4	271	
+6	215	
+8	249	
+12	211	
+24	189	
+# Thread count	Time	
+1	408	
+2	385	
+4	277	
+6	259	
+8	230	
+12	191	
+24	161	
+# Thread count	Time	
+1	308	
+2	309	
+4	321	
+6	290	
+8	261	
+12	226	
+24	193	
+# Thread count	Time	
+1	411	
+2	320	
+4	273	
+6	235	
+8	224	
+12	194	
+24	164	
+# Thread count	Time	
+1	348	
+2	250	
+4	338	
+6	260	
+8	252	
+12	207	
+24	181	
+# Thread count	Time	
+1	405	
+2	380	
+4	277	
+6	246	
+8	230	
+12	220	
+24	188	
+# Thread count	Time	
+1	408	
+2	434	
+4	286	
+6	236	
+8	250	
+12	209	
+24	189	
+# Thread count	Time	
+1	406	
+2	378	
+4	258	
+6	260	
+8	207	
+12	188	
+24	157	
+# Total time in algorithm: 1854 ms
+# Ellapsed time: 38.8466 seconds

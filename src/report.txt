@@ -1,0 +1,78 @@
+==28889== drd, a thread error detector
+==28889== Copyright (C) 2006-2012, and GNU GPL'd, by Bart Van Assche.
+==28889== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info
+==28889== Command: ./ta -i 500
+==28889== 
+==28889== Probably a race condition: condition variable 0x602bd68 has been signaled but the associated mutex 0x602bd40 is not locked by the signalling thread.
+==28889==    at 0x4C334E2: pthread_cond_signal@* (in /usr/lib/valgrind/vgpreload_drd-amd64-linux.so)
+==28889==    by 0x402376: hipta_algorithm(ThreadPool*) (in /home/stianlik/Prosjekter/fordypning/src/ta)
+==28889==    by 0x4014A7: main (in /home/stianlik/Prosjekter/fordypning/src/ta)
+==28889== cond 0x602bd68 was first observed at:
+==28889==    at 0x4C32B69: pthread_cond_wait@* (in /usr/lib/valgrind/vgpreload_drd-amd64-linux.so)
+==28889==    by 0x401D42: hipta_worker(void*) (in /home/stianlik/Prosjekter/fordypning/src/ta)
+==28889==    by 0x4C2E6C4: ??? (in /usr/lib/valgrind/vgpreload_drd-amd64-linux.so)
+==28889==    by 0x4E47E0E: start_thread (in /usr/lib/libpthread-2.16.so)
+==28889==    by 0x5B6231C: clone (in /usr/lib/libc-2.16.so)
+==28889== mutex 0x602bd40 was first observed at:
+==28889==    at 0x4C30DEE: pthread_mutex_lock (in /usr/lib/valgrind/vgpreload_drd-amd64-linux.so)
+==28889==    by 0x401D27: hipta_worker(void*) (in /home/stianlik/Prosjekter/fordypning/src/ta)
+==28889==    by 0x4C2E6C4: ??? (in /usr/lib/valgrind/vgpreload_drd-amd64-linux.so)
+==28889==    by 0x4E47E0E: start_thread (in /usr/lib/libpthread-2.16.so)
+==28889==    by 0x5B6231C: clone (in /usr/lib/libc-2.16.so)
+==28889== 
+==28889== Thread 2:
+==28889== Probably a race condition: condition variable 0x602be28 has been signaled but the associated mutex 0x602be00 is not locked by the signalling thread.
+==28889==    at 0x4C334E2: pthread_cond_signal@* (in /usr/lib/valgrind/vgpreload_drd-amd64-linux.so)
+==28889==    by 0x401E14: hipta_worker(void*) (in /home/stianlik/Prosjekter/fordypning/src/ta)
+==28889==    by 0x4C2E6C4: ??? (in /usr/lib/valgrind/vgpreload_drd-amd64-linux.so)
+==28889==    by 0x4E47E0E: start_thread (in /usr/lib/libpthread-2.16.so)
+==28889==    by 0x5B6231C: clone (in /usr/lib/libc-2.16.so)
+==28889== cond 0x602be28 was first observed at:
+==28889==    at 0x4C32B69: pthread_cond_wait@* (in /usr/lib/valgrind/vgpreload_drd-amd64-linux.so)
+==28889==    by 0x4023FA: hipta_algorithm(ThreadPool*) (in /home/stianlik/Prosjekter/fordypning/src/ta)
+==28889==    by 0x4014A7: main (in /home/stianlik/Prosjekter/fordypning/src/ta)
+==28889== mutex 0x602be00 was first observed at:
+==28889==    at 0x4C30DEE: pthread_mutex_lock (in /usr/lib/valgrind/vgpreload_drd-amd64-linux.so)
+==28889==    by 0x40239C: hipta_algorithm(ThreadPool*) (in /home/stianlik/Prosjekter/fordypning/src/ta)
+==28889==    by 0x4014A7: main (in /home/stianlik/Prosjekter/fordypning/src/ta)
+==28889== 
+--28889-- VALGRIND INTERNAL ERROR: Valgrind received a signal 11 (SIGSEGV) - exiting
+--28889-- si_code=1;  Faulting address: 0xFFFFFFCE0602C28E;  sp: 0x40277de00
+
+valgrind: the 'impossible' happened:
+   Killed by fatal signal
+==28889==    at 0x3804D100: ??? (in /usr/lib/valgrind/drd-amd64-linux)
+==28889==    by 0x380391AD: ??? (in /usr/lib/valgrind/drd-amd64-linux)
+==28889==    by 0x38039222: ??? (in /usr/lib/valgrind/drd-amd64-linux)
+==28889==    by 0x38087160: ??? (in /usr/lib/valgrind/drd-amd64-linux)
+==28889==    by 0x38096309: ??? (in /usr/lib/valgrind/drd-amd64-linux)
+
+sched status:
+  running_tid=1
+
+Thread 1: status = VgTs_Runnable
+==28889==    at 0x4C2C34C: operator delete[](void*) (in /usr/lib/valgrind/vgpreload_drd-amd64-linux.so)
+==28889==    by 0x402278: hipta_free() (in /home/stianlik/Prosjekter/fordypning/src/ta)
+==28889==    by 0x4014DD: main (in /home/stianlik/Prosjekter/fordypning/src/ta)
+
+Thread 2: status = VgTs_WaitSys
+==28889==    at 0x4E4B954: pthread_cond_wait@@GLIBC_2.3.2 (in /usr/lib/libpthread-2.16.so)
+==28889==    by 0x4C32BDD: pthread_cond_wait@* (in /usr/lib/valgrind/vgpreload_drd-amd64-linux.so)
+==28889==    by 0x401D42: hipta_worker(void*) (in /home/stianlik/Prosjekter/fordypning/src/ta)
+==28889==    by 0x4C2E6C4: ??? (in /usr/lib/valgrind/vgpreload_drd-amd64-linux.so)
+==28889==    by 0x4E47E0E: start_thread (in /usr/lib/libpthread-2.16.so)
+==28889==    by 0x5B6231C: clone (in /usr/lib/libc-2.16.so)
+
+
+Note: see also the FAQ in the source distribution.
+It contains workarounds to several common problems.
+In particular, if Valgrind aborted or crashed after
+identifying problems in your program, there's a good chance
+that fixing those problems will prevent Valgrind aborting or
+crashing, especially if it happened in m_mallocfree.c.
+
+If that doesn't help, please report this bug to: www.valgrind.org
+
+In the bug report, send all the above text, the valgrind
+version, and what OS and version you are using.  Thanks.
+

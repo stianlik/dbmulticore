@@ -1,0 +1,124 @@
+Algorithms used in databases management systems (DBMS) have
+traditionally focused on external factors like I/O-operations. Disk
+access is an order of magnitude slower than memory access and
+minimizing I/O-access is a necessity working on data sets exceeding
+main memory capacity. However, a rapid increase in main memory
+capacity are making memory based algorithms more relevant.
+
+There are two main areas for memory based algorithms in database
+systems: main memory database management systems (MMDB) and disk
+resident database management systems (DRDB) with very large caches.
+MMDBs keep all data in memory and thereby completely avoid the I/O
+bottleneck, therefore traditional algorithms can not be regarded as
+optimal for these systems without close examination. Main memory
+bandwidth and compute capacity are becoming dominant factors in
+algorithm performance. In addition, DRDBs with large caches can
+complete many operations without intermediate I/O access. This leads
+to a need for algorithms that use memory bandwidth efficiently and are
+capable of optimal cache patterns without making compromises to
+minimize I/O access.
+
+For a long time, processor manufacturers increased compute power by
+increasing the operating frequency and placing transistors closer
+together. Unfortunately, this is no longer an option, increasing
+operating frequency further shows diminishing gains in performance
+compared to the power requirements. The so-called power wall has been
+reached, and processor manufacturers have been forced to find other
+ways to utilize chip-transistors. However, Moore's law is still valid,
+the number of transistors per chip continue to increase. To better
+utilize these resources manufacturers have started increasing number
+of cores per processor. This is an efficient method of increasing
+compute power without exponentially increasing the processors power
+consumption.
+
+Another trend is that processors are providing greater capacity for
+data parallelism by in the form of single instruction multiple data
+(SIMD) processing. SIMD allows one operation to be performed for
+multiple inputs without additional CPU cycles, e.g. multiply four
+values at the price of one. For instance both Intel and AMD are
+supporting streaming SIMD extensions 4 (SSE4), providing many
+opportunities for data parallelism. Currently, general purpose
+processors have limited SIMD support, SSE4 supports signed
+multiplication of no more than four 32-bit integers in one operation.
+However, a speedup of four in an inner loop, with practically no
+increase in work are definitely worth pursuing. By combining task
+parallelism and data parallelism, one can achieve significant
+performance gains in suited algorithms. 
+
+In \cite{stonebraker:the}, Stonebraker compares the three primary
+parallel architectures: shared memory (SM), shared disk (SM), and
+shared nothing (SN). In SM systems, all processors (or cores) share a
+common central memory. Each processor in a SM system has private
+memory, while all processors share a collection of one or more
+external disks. For SN systems, nothing is shared, this is the case of
+distributed systems and have been the primary focus in database
+management systems (DMBS). Stonebraker argued that SM systems did not
+scale to a large number of processors, hence they were less
+interesting than the other systems. He also observed that SD systems
+does not excell in any area compared to the other two, and concluded
+that SN systems is the primary target for DBMS. Not only did SN show
+the best characteristics for scaling, it also matched the current
+marketplace interest, distributed database management systems. At the
+time (1985), this was the obvious contender for further research.
+However, with recent trends in processor- and memory development, SM
+systems are becoming more prominent. Multi-core processors are
+highly-popular SM systems, and developers must resort to SM
+programming to utilize the increasing parallel compute capacity.
+
+The increased interest in SM programming has led to an number of
+frameworks to help programmers gradually parallelize existing
+algorithms, and to develop completely new methods. These frameworks
+address some of the issues mentioned by Stonebraker in
+\cite{stonebraker:the}, for instance, frameworks provide practical
+solutions for concurrency control and management of hot spots. OpenMP
+is a popular choice for incrementally adding parallelism to an
+algorithm, this framework allows the developer to tag parallel regions
+as "parallel" using directives. Critical sections can be tagged as
+"critical" to provide a simple concurrency control. There are
+high-level and low-level frameworks. High-level frameworks, like
+OpenMP are great to parallelize loops and typical bottlenecks, but in
+some cases developers need to resort to lower-level programming to get
+more fine-grained synchronization and to better utilize the resources
+available.
+
+Memory based databases are also obtaining an increased interest.
+Commercial products like IBM solidDB and Oracle TimesTen are examples
+of high-performance relational MMDBs in use today. By managing data in
+memory, and optimizing data structures and access algorithms
+accordingly, database operations execute with maximum efficiency,
+achieving dramatic gains in responsiveness and throughput
+\cite{oracle}.
+
+Much of the research on multi-core algorithms  have focused on the
+join operation. Hash join for shared memory architectures is evaluated
+in \cite{hashjoin} and sort-merge join is explored in
+\cite{sortmergejoin}. A common theme is that synchronization costs are
+a big factor in multi-core performance. Larson et al.\ explores
+concurrency control mechanisms for MMDBs in \cite{mmdb}, they argue
+that concurrency control methods used today do not scale to the high
+transaction rates achievable, and suggests methods based on
+multiversioning.
+
+Even though shared-memory systems only recently became popular,
+parallel DBMS have been around for a long time in shared nothing
+systems. Researchers have developed techniques to achieve optimal load
+balancing, minimize synchronization and to solve other issues related
+to parallel algorithms. Traditional techniques should be considered
+when developing algorithms for new architectures, developers should
+avoid re-inventing the wheel, and instead take advantage of the
+knowledge gained from SN systems. 
+
+This report focus on database operations optimized for multi-core
+systems. First general database operations are explained using the
+relational operator terminology. Second traditional, disk-based
+methods, such as nested-loops, sorting, and partitioning are explored.
+Third, the multi-core architecture is introduced, including memory and
+cache structures, multithreading, and common optimization techniques.
+Fourth, parallel, memory based database algorithms are presented, and
+a multi-core algorithm is developed based on the threshold algorithm
+for top-$k$ search explained in Section \ref{sec:ta}, optimization
+techniques presented in Section \ref{sec:optimization}, and
+traditional partitioning schemes used in parallel database
+systems. Finally the horizontal input partitioning threshold
+algorithm (HIPTA) is implemented and evaluated in Chapter
+\ref{chap:implementation-and-evaluation}.
